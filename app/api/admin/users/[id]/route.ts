@@ -10,17 +10,18 @@ async function isAdmin(request: NextRequest) {
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await isAdmin(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const { id } = await params
   const action = request.nextUrl.searchParams.get('action') || 'approve'
 
   if (action === 'approve') {
     const user = await db.allowedUser.update({
-      where: { id: params.id },
+      where: { id },
       data: { approved: true },
     })
     return NextResponse.json(user)

@@ -33,8 +33,8 @@ export default function MovementSection({ value, onChange }: MovementSectionProp
         {MOVEMENT_TYPES.map(({ id, label, emoji }) => (
           <button
             key={id}
-            onClick={() => toggleType(id)}
-            className={`chip ${types.includes(id) ? 'chip-selected' : 'chip-unselected'}`}
+            onClick={() => toggleType(id as 'palestra' | 'nuoto' | 'altro' | 'niente')}
+            className={`chip ${types.includes(id as 'palestra' | 'nuoto' | 'altro' | 'niente') ? 'chip-selected' : 'chip-unselected'}`}
           >
             <span className="mr-1">{emoji}</span> {label}
           </button>

@@ -56,14 +56,14 @@ export default function TodayPage() {
     setSaveMessage('')
     try {
       // Ensure date is in YYYY-MM-DD format (not datetime)
-      const formatDateString = (date: any): string => {
+      const formatDateString = (date: unknown): string => {
         if (date instanceof Date) {
           return date.toISOString().split('T')[0]
         }
         if (typeof date === 'string') {
           return date.includes('T') ? date.split('T')[0] : date
         }
-        return date
+        return String(date)
       }
 
       const dataToSave = {

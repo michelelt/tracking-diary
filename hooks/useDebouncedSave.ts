@@ -9,7 +9,7 @@ export function useDebouncedSave(
   delayMs: number = 1000
 ) {
   const [state, setState] = useState<SaveState>('idle')
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const triggerSave = useCallback(() => {
     setState('unsaved')

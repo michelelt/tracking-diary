@@ -9,9 +9,9 @@ type EntryData = {
   date: string
   sleep?: any
   energy?: any
-  mood?: string
+  mood?: 'basso' | 'neutro' | 'buono' | 'molto_buono' | null
   movement?: any
-  stimulation?: string
+  stimulation?: 'poco' | 'normale' | 'tanto' | 'troppo' | null
   positiveThing?: string
   createdAt: string
   updatedAt: string

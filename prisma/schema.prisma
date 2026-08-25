@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// NextAuth models
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String?  @unique
+  emailVerified DateTime?
+  image         String?
+
+  accounts Account[]
+  sessions Session[]
+  entries  Entry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// App models
+model AllowedUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  createdBy String? // email of admin who added this user
+}
+
+model Entry {
+  id   String   @id @default(cuid())
+  userId String
+  date DateTime @db.Date // Unique constraint on userId + date
+
+  // Sleep: { bedTime, fallAsleepTime, wakeUpTime, feeling, hoursSlept }
+  sleep Json?
+
+  // Energy: { morning, afternoon, evening } - all 1-10, all optional
+  energy Json?
+
+  // Mood: "basso" | "neutro" | "buono" | "molto_buono"
+  mood String?
+
+  // Movement: { types: string[], notes?: string }
+  // types can be: "palestra", "nuoto", "camminata", "altro", "niente"
+  movement Json?
+
+  // Stimulation: "poco" | "normale" | "tanto" | "troppo"
+  stimulation String?
+
+  // One positive thing: max 200 chars
+  positiveThing String? @db.VarChar(200)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model AdminSession {
+  id        String   @id @default(cuid())
+  userId    String   @unique // Only one active admin session at a time
+  token     String   @unique // Random token for verification
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

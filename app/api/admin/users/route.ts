@@ -8,7 +8,7 @@ async function isAdmin() {
   return session?.user?.email === adminEmail
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(req: NextRequest) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { id } = await request.json()
+  const { id } = await req.json()
 
   if (!id) {
     return NextResponse.json({ error: 'ID required' }, { status: 400 })

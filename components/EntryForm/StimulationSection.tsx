@@ -3,8 +3,8 @@
 import { STIMULATION_LEVELS } from '@/lib/constants'
 
 interface StimulationSectionProps {
-  value?: string
-  onChange: (level: string) => void
+  value?: string | null
+  onChange: (level: 'poco' | 'normale' | 'tanto' | 'troppo') => void
 }
 
 export default function StimulationSection({ value, onChange }: StimulationSectionProps) {

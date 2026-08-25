@@ -3,8 +3,8 @@
 import { MOODS } from '@/lib/constants'
 
 interface MoodSectionProps {
-  value?: string
-  onChange: (mood: string) => void
+  value?: string | null
+  onChange: (mood: 'basso' | 'neutro' | 'buono' | 'molto_buono') => void
 }
 
 export default function MoodSection({ value, onChange }: MoodSectionProps) {

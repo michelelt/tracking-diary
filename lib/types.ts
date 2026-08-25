@@ -4,9 +4,9 @@ export type EntryData = {
   date: string
   sleep?: SleepData
   energy?: EnergyData
-  mood?: string
+  mood?: 'basso' | 'neutro' | 'buono' | 'molto_buono' | null
   movement?: MovementData
-  stimulation?: string
+  stimulation?: 'poco' | 'normale' | 'tanto' | 'troppo' | null
   positiveThing?: string
   createdAt: Date
   updatedAt: Date
@@ -27,7 +27,7 @@ export type EnergyData = {
 }
 
 export type MovementData = {
-  types?: string[]
+  types?: ('palestra' | 'nuoto' | 'altro' | 'niente')[]
   notes?: string
 }
 

@@ -13,7 +13,7 @@ export default function MoodSection({ value, onChange }: MoodSectionProps) {
       <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">😊 Umore</h2>
 
       <div className="grid grid-cols-2 gap-2">
-        {(Object.entries(MOODS) as Array<[string, any]>).map(([key, { label, emoji }]) => (
+        {(Object.entries(MOODS) as Array<['basso' | 'neutro' | 'buono' | 'molto_buono', any]>).map(([key, { label, emoji }]) => (
           <button
             key={key}
             onClick={() => onChange(key)}

@@ -16,7 +16,7 @@ export default function StimulationSection({ value, onChange }: StimulationSecti
       </p>
 
       <div className="grid grid-cols-2 gap-2">
-        {(Object.entries(STIMULATION_LEVELS) as Array<[string, any]>).map(([key, { label, emoji }]) => (
+        {(Object.entries(STIMULATION_LEVELS) as Array<['poco' | 'normale' | 'tanto' | 'troppo', any]>).map(([key, { label, emoji }]) => (
           <button
             key={key}
             onClick={() => onChange(key)}

@@ -107,42 +107,42 @@ export default function TodayPage() {
           {/* Sections */}
           <div className="card">
             <SleepSection
-              value={formData.sleep}
+              value={formData.sleep || undefined}
               onChange={(sleep) => handleChange({ sleep })}
             />
           </div>
 
           <div className="card">
             <EnergySection
-              value={formData.energy}
+              value={formData.energy || undefined}
               onChange={(energy) => handleChange({ energy })}
             />
           </div>
 
           <div className="card">
             <MoodSection
-              value={formData.mood}
+              value={formData.mood || undefined}
               onChange={(mood) => handleChange({ mood })}
             />
           </div>
 
           <div className="card">
             <MovementSection
-              value={formData.movement}
+              value={formData.movement || undefined}
               onChange={(movement) => handleChange({ movement })}
             />
           </div>
 
           <div className="card">
             <StimulationSection
-              value={formData.stimulation}
+              value={formData.stimulation || undefined}
               onChange={(stimulation) => handleChange({ stimulation })}
             />
           </div>
 
           <div className="card">
             <PositiveThingSection
-              value={formData.positiveThing}
+              value={formData.positiveThing || undefined}
               onChange={(positiveThing) => handleChange({ positiveThing })}
             />
           </div>

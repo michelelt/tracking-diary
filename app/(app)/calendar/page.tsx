@@ -22,10 +22,8 @@ export default function CalendarPage() {
     const fetchEntries = async () => {
       try {
         setLoading(true)
-        const firstDay = new Date(year, month, 1)
-        const lastDay = new Date(year, month + 1, 0)
 
-        // Fetch entries for the month (you might need to add a range query to your API)
+        // Fetch entries for the month
         const res = await fetch(
           `/api/entries/month?year=${year}&month=${month + 1}`
         )

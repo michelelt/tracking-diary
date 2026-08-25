@@ -46,11 +46,7 @@ export function useEntry(date: string) {
   const saveEntry = useCallback(
     async (updates: Partial<Entry>) => {
       try {
-        const formattedDate = date instanceof Date
-          ? date.toISOString().split('T')[0]
-          : typeof date === 'string' && date.includes('T')
-            ? date.split('T')[0]
-            : date
+        const formattedDate = date.includes('T') ? date.split('T')[0] : date
 
         const payload: Entry = {
           date: formattedDate,

@@ -1,8 +1,8 @@
 import { auth } from '@/auth'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { db } from './db'
 
-export async function requireAuth(req: NextRequest) {
+export async function requireAuth() {
   const session = await auth()
 
   if (!session?.user?.email) {
@@ -12,8 +12,8 @@ export async function requireAuth(req: NextRequest) {
   return session
 }
 
-export async function requireAuthUser(req: NextRequest) {
-  const session = await requireAuth(req)
+export async function requireAuthUser() {
+  const session = await requireAuth()
 
   if (!session) {
     return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }

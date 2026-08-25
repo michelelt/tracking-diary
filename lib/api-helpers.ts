@@ -15,12 +15,12 @@ export async function requireAuth() {
 export async function requireAuthUser() {
   const session = await requireAuth()
 
-  if (!session) {
+  if (!session || !session.user?.email) {
     return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
   }
 
   const user = await db.user.findUnique({
-    where: { email: session.user.email! },
+    where: { email: session.user.email },
   })
 
   if (!user) {

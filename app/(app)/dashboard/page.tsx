@@ -1,7 +1,7 @@
 'use client'
 
 import Navigation from '@/components/Navigation'
-import { MOODS, MOVEMENT_TYPES } from '@/lib/constants'
+import { MOODS } from '@/lib/constants'
 import { useState, useEffect } from 'react'
 import {
   LineChart,

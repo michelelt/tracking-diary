@@ -1,4 +1,4 @@
-import { auth } from '@/app/api/auth/[...nextauth]/route'
+import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 
 export default async function AppLayout({

@@ -1,4 +1,4 @@
-import { auth } from '@/app/api/auth/[...nextauth]/route'
+import { auth } from '@/auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from './db'
 

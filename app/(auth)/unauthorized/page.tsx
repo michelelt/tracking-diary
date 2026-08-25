@@ -25,7 +25,7 @@ export default function UnauthorizedPage() {
           </button>
 
           <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
-            Se ritieni sia un errore, contatta l'amministratore.
+            Se ritieni sia un errore, contatta l&apos;amministratore.
           </p>
         </div>
       </div>

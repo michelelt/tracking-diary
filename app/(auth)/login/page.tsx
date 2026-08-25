@@ -30,7 +30,7 @@ export default function LoginPage() {
           </button>
 
           <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
-            Se non sei ancora registrato, la tua richiesta sarà inviata all'admin per l'approvazione.
+            Se non sei ancora registrato, la tua richiesta sarà inviata all&apos;admin per l&apos;approvazione.
           </p>
         </div>
       </div>

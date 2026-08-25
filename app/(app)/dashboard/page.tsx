@@ -16,7 +16,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Scatter,
 } from 'recharts'
 
 interface DashboardData {

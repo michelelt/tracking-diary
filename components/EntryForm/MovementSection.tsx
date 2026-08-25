@@ -9,10 +9,10 @@ interface MovementSectionProps {
 }
 
 export default function MovementSection({ value, onChange }: MovementSectionProps) {
-  const types = value?.types || []
+  const types = (value?.types || []) as ('palestra' | 'nuoto' | 'altro' | 'niente')[]
 
-  const toggleType = (type: string) => {
-    let newTypes: string[]
+  const toggleType = (type: 'palestra' | 'nuoto' | 'altro' | 'niente') => {
+    let newTypes: ('palestra' | 'nuoto' | 'altro' | 'niente')[]
     if (types.includes(type)) {
       newTypes = types.filter((t) => t !== type)
     } else {

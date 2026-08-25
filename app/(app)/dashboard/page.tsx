@@ -16,7 +16,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ScatterChart,
   Scatter,
 } from 'recharts'
 

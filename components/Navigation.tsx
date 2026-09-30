@@ -13,7 +13,6 @@ export default function Navigation() {
     { href: '/today', label: 'Oggi', emoji: '📝' },
     { href: '/calendar', label: 'Calendario', emoji: '📅' },
     { href: '/dashboard', label: 'Dashboard', emoji: '📊' },
-    { href: '/records', label: 'Record', emoji: '📋' },
   ]
 
   return (

@@ -22,9 +22,9 @@ export async function GET(req: NextRequest) {
     const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString())
     const month = parseInt(searchParams.get('month') || new Date().getMonth() + 1 + '')
 
-    // Create start and end dates for the month
-    const startDate = new Date(year, month - 1, 1)
-    const endDate = new Date(year, month, 0, 23, 59, 59, 999)
+    // Create start and end dates for the month (dates are stored at UTC midnight)
+    const startDate = new Date(Date.UTC(year, month - 1, 1))
+    const endDate = new Date(Date.UTC(year, month, 0))
 
     const entries = await db.entry.findMany({
       where: {
@@ -34,16 +34,13 @@ export async function GET(req: NextRequest) {
           lte: endDate,
         },
       },
-      select: {
-        date: true,
-        mood: true,
-      },
+      orderBy: { date: 'asc' },
     })
 
     // Format entries with date as YYYY-MM-DD string
     const formattedEntries = entries.map((entry) => ({
+      ...entry,
       date: entry.date.toISOString().split('T')[0],
-      mood: entry.mood,
     }))
 
     return NextResponse.json({ entries: formattedEntries })

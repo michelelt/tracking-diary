@@ -8,10 +8,25 @@ import SleepSection from '@/components/EntryForm/SleepSection'
 import StimulationSection from '@/components/EntryForm/StimulationSection'
 import Navigation from '@/components/Navigation'
 import { Entry } from '@/lib/validators'
-import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
 
 export default function TodayPage() {
-  const today = new Date().toISOString().split('T')[0]
+  return (
+    <Suspense>
+      <EntryEditor />
+    </Suspense>
+  )
+}
+
+function EntryEditor() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const dateParam = searchParams.get('date')
+  // ?date=YYYY-MM-DD opens an existing day for editing
+  const isEditing = !!dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)
+  const today = isEditing ? dateParam : new Date().toISOString().split('T')[0]
 
   const defaultFormData: Entry = {
     date: today,
@@ -38,6 +53,8 @@ export default function TodayPage() {
               stimulation: data.entry.stimulation,
               positiveThing: data.entry.positiveThing,
             })
+          } else {
+            setFormData({ date: today })
           }
         }
       } catch (err) {
@@ -81,6 +98,11 @@ export default function TodayPage() {
         throw new Error('Failed to save')
       }
 
+      if (isEditing) {
+        router.push('/calendar')
+        return
+      }
+
       setSaveMessage('✅ Salvato con successo!')
       setFormData(defaultFormData)
       setTimeout(() => setSaveMessage(''), 3000)
@@ -99,8 +121,16 @@ export default function TodayPage() {
         <div className="mx-auto max-w-2xl space-y-6">
           {/* Header */}
           <div className="space-y-3">
+            {isEditing && (
+              <Link
+                href="/calendar"
+                className="text-sm text-slate-600 hover:underline dark:text-slate-400"
+              >
+                ← Torna al calendario
+              </Link>
+            )}
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-              📝 {new Date(today).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
+              {isEditing ? '✏️' : '📝'} {new Date(today).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
             </h1>
           </div>
 

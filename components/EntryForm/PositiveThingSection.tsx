@@ -10,24 +10,24 @@ export default function PositiveThingSection({ value, onChange }: PositiveThingS
   const maxChars = 200
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">✨ Una cosa bella</h2>
-      <p className="text-sm text-slate-600 dark:text-slate-400">
-        Qualcosa di bello che ti è successo oggi
-      </p>
-
-      <div className="relative">
-        <textarea
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value.slice(0, maxChars))}
-          placeholder="Es. Ho mangiato bene, ho passato del tempo con la famiglia..."
-          rows={3}
-          className="input-field resize-none text-sm"
-        />
-        <div className="mt-2 text-xs text-slate-500 dark:text-slate-400 text-right">
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="section-title">
+          Una cosa bella <span className="font-normal text-slate-500">· di oggi</span>
+        </h2>
+        <span className="text-xs tabular-nums text-slate-500 dark:text-slate-400">
           {charCount}/{maxChars}
-        </div>
+        </span>
       </div>
+
+      <textarea
+        value={value || ''}
+        onChange={(e) => onChange(e.target.value.slice(0, maxChars))}
+        placeholder="Es. Ho mangiato bene, ho passato del tempo con la famiglia..."
+        rows={2}
+        aria-label="Una cosa bella di oggi"
+        className="input-field resize-none text-sm"
+      />
     </div>
   )
 }

@@ -6,10 +6,11 @@ export const SLEEP_FEELINGS = {
 }
 
 export const MOODS = {
-  basso: { label: 'Basso', emoji: '😔', color: 'bg-red-400' },
-  neutro: { label: 'Neutro', emoji: '😐', color: 'bg-slate-400' },
-  buono: { label: 'Buono', emoji: '🙂', color: 'bg-green-400' },
-  molto_buono: { label: 'Molto buono', emoji: '😄', color: 'bg-green-600' },
+  // Same hues as MOOD_COLORS in lib/dashboard.ts
+  basso: { label: 'Basso', emoji: '😔', color: 'bg-[#e34948]' },
+  neutro: { label: 'Neutro', emoji: '😐', color: 'bg-[#c9c7bf]' },
+  buono: { label: 'Buono', emoji: '🙂', color: 'bg-[#5598e7]' },
+  molto_buono: { label: 'Molto buono', emoji: '😄', color: 'bg-[#184f95]' },
 }
 
 export const MOVEMENT_TYPES = [

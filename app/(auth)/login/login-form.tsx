@@ -19,7 +19,7 @@ export function LoginForm() {
       <div className="w-full max-w-sm">
         <div className="card">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">Baseline</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">Baseline</h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
               Traccia le tue metriche personali, 2 minuti al giorno
             </p>

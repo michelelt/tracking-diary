@@ -16,6 +16,11 @@ interface PatternData {
   }
 }
 
+const statValue = 'text-3xl font-semibold tabular-nums tracking-tight leading-none text-slate-900 dark:text-slate-50'
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
+
 export default function PatternsPage() {
   const [patterns, setPatterns] = useState<PatternData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -43,8 +48,8 @@ export default function PatternsPage() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-4 pb-24">
-          <div className="text-center py-12">Caricamento patterns...</div>
+        <div className="page">
+          <div className="state" role="status">Caricamento…</div>
         </div>
       </>
     )
@@ -54,8 +59,8 @@ export default function PatternsPage() {
     return (
       <>
         <Navigation />
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-4 pb-24">
-          <div className="text-center py-12">Nessun dato disponibile</div>
+        <div className="page">
+          <div className="state" role="status">Non è stato possibile caricare i dati. Riprova tra poco.</div>
         </div>
       </>
     )
@@ -80,52 +85,39 @@ export default function PatternsPage() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-slate-50 p-4 dark:bg-slate-900 pb-24">
-        <div className="mx-auto max-w-4xl space-y-6">
+      <div className="page">
+        <div className="mx-auto max-w-6xl space-y-6">
           {/* Header */}
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-              📊 Patterns & Statistiche
-            </h1>
+          <div className="space-y-1">
+            <h1 className="page-title">Statistiche</h1>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              Dal {patterns.dateRange.start} al {patterns.dateRange.end}
+              Dal {formatDate(patterns.dateRange.start)} al {formatDate(patterns.dateRange.end)}
             </p>
           </div>
 
           {/* Overview Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="card bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Totale Entry
-              </div>
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                {patterns.totalEntries}
-              </div>
+            <div className="card !p-4 space-y-2">
+              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">Giorni registrati</div>
+              <div className={statValue}>{patterns.totalEntries}</div>
             </div>
 
-            <div className="card bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800">
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Energia Media
-              </div>
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                {patterns.averageEnergy.toFixed(1)}/10
-              </div>
+            <div className="card !p-4 space-y-2">
+              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">Energia media</div>
+              <div className={statValue}>{patterns.averageEnergy.toFixed(1)}/10</div>
             </div>
 
-            <div className="card bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800">
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Sonno Medio
-              </div>
-              <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                {patterns.averageSleep.toFixed(1)}h
-              </div>
+            <div className="card !p-4 space-y-2">
+              <div className="text-sm font-medium text-slate-500 dark:text-slate-400">Sonno medio</div>
+              <div className={statValue}>{patterns.averageSleep.toFixed(1)}h</div>
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Mood Distribution */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-4">
-              😊 Distribuzione Mood
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-4">
+              Distribuzione dell&apos;umore
             </h2>
             <div className="space-y-4">
               {sortedMoods.map(({ mood, count, percentage }) => {
@@ -157,8 +149,8 @@ export default function PatternsPage() {
 
           {/* Movement Frequency */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-4">
-              🏃 Frequenza Movimento
+            <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-4">
+              Movimento
             </h2>
             <div className="space-y-4">
               {sortedMovements.length > 0 ? (
@@ -181,7 +173,7 @@ export default function PatternsPage() {
                       </div>
                       <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                         <div
-                          className="h-2 rounded-full bg-green-500"
+                          className="h-2 rounded-full bg-accent"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
@@ -194,6 +186,7 @@ export default function PatternsPage() {
                 </p>
               )}
             </div>
+          </div>
           </div>
         </div>
       </div>

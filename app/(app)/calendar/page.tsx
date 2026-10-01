@@ -154,40 +154,25 @@ export default function CalendarPage() {
           onClick={() => setFutureBanner(false)}
           className="fixed top-20 left-1/2 z-50 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 cursor-pointer rounded-lg bg-slate-900 px-4 py-3 text-center text-sm font-medium text-white shadow-lg dark:bg-slate-50 dark:text-slate-900"
         >
-          🔮 Come fai a sapere come starai nel futuro?
+          Come fai a sapere come starai nel futuro?
         </div>
       )}
-      <div className="min-h-screen bg-slate-50 p-4 dark:bg-slate-900 pb-24">
-        <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="page">
+        <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Calendar */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Header */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 capitalize">
-                  📅 {monthName}
-                </h1>
-                <button
-                  onClick={handleToday}
-                  className="text-sm px-3 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
-                >
+          <div className="lg:col-span-2 space-y-4">
+            {/* Header + month navigation */}
+            <div className="flex items-center justify-between gap-3">
+              <h1 className="page-title capitalize">{monthName}</h1>
+              <div className="flex items-center gap-2">
+                <button onClick={handlePrevMonth} aria-label="Mese precedente" className="btn-secondary">
+                  ←
+                </button>
+                <button onClick={handleToday} className="btn-secondary">
                   Oggi
                 </button>
-              </div>
-
-              {/* Navigation */}
-              <div className="flex justify-between items-center">
-                <button
-                  onClick={handlePrevMonth}
-                  className="px-4 py-2 rounded bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
-                >
-                  ← Precedente
-                </button>
-                <button
-                  onClick={handleNextMonth}
-                  className="px-4 py-2 rounded bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
-                >
-                  Successivo →
+                <button onClick={handleNextMonth} aria-label="Mese successivo" className="btn-secondary">
+                  →
                 </button>
               </div>
             </div>
@@ -195,7 +180,7 @@ export default function CalendarPage() {
             {/* Calendar Grid */}
             <div className="card">
               {loading ? (
-                <div className="p-8 text-center text-slate-500">Caricamento...</div>
+                <div className="state min-h-[24rem]" role="status">Caricamento…</div>
               ) : (
                 <>
                   {/* Day headers */}
@@ -203,7 +188,7 @@ export default function CalendarPage() {
                     {['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'].map((day) => (
                       <div
                         key={day}
-                        className="text-center text-sm font-semibold text-slate-600 dark:text-slate-400 py-2"
+                        className="text-center text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 py-2"
                       >
                         {day}
                       </div>
@@ -227,11 +212,14 @@ export default function CalendarPage() {
                         <button
                           key={day}
                           onClick={() => handleSelectDay(day)}
-                          className={`aspect-square p-2 rounded text-center text-sm transition-colors ${moodColor} ${
-                            isToday ? 'ring-2 ring-blue-500 font-bold' : 'hover:opacity-80'
-                          } ${isSelected ? 'ring-2 ring-purple-500' : ''}`}
+                          aria-current={isToday ? 'date' : undefined}
+                          className={`aspect-square p-1 sm:p-2 rounded-lg text-center text-sm transition ${moodColor} ${
+                            isToday ? 'ring-2 ring-accent' : 'hover:brightness-95'
+                          } ${isSelected ? 'ring-2 ring-slate-900' : ''} ${
+                            dateStr > getTodayString() ? 'opacity-50' : ''
+                          }`}
                         >
-                          <div className="font-semibold text-slate-900 dark:text-slate-50">
+                          <div className={`font-medium tabular-nums ${entry?.mood === 'molto_buono' ? 'text-white' : 'text-slate-900'}`}>
                             {day}
                           </div>
                           {entry && (
@@ -252,25 +240,21 @@ export default function CalendarPage() {
           <div className="lg:col-span-1">
             {selectedEntry ? (
               <div className="card space-y-4">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
-                  Dettagli
-                </h2>
-
                 <div className="space-y-2">
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
-                    📅 {new Date(selectedEntry.date).toLocaleDateString('it-IT', {
+                  <h2 className="text-base font-semibold text-slate-900 first-letter:uppercase dark:text-slate-50">
+                    {new Date(selectedEntry.date).toLocaleDateString('it-IT', {
                       weekday: 'long',
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
                     })}
-                  </div>
+                  </h2>
 
                   {/* Sleep */}
                   {selectedEntry.sleep && (
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                       <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        😴 Sonno
+                        Sonno
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
                         {selectedEntry.sleep.hoursSlept && (
@@ -290,7 +274,7 @@ export default function CalendarPage() {
                   {selectedEntry.energy && (
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                       <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        ⚡ Energia
+                        Energia
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
                         {selectedEntry.energy.morning && (
@@ -310,7 +294,7 @@ export default function CalendarPage() {
                   {selectedEntry.mood && (
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                       <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        😊 Mood
+                        Umore
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-400">
                         {selectedEntry.mood}
@@ -322,7 +306,7 @@ export default function CalendarPage() {
                   {selectedEntry.movement && (
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                       <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        🏃 Movimento
+                        Movimento
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
                         {selectedEntry.movement.types?.join(', ')}
@@ -339,7 +323,7 @@ export default function CalendarPage() {
                   {selectedEntry.stimulation && (
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                       <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        📵 Stimolazione
+                        Stimolazione
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-400">
                         {selectedEntry.stimulation}
@@ -351,7 +335,7 @@ export default function CalendarPage() {
                   {selectedEntry.positiveThing && (
                     <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
                       <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        ✨ Cosa Positiva
+                        Una cosa bella
                       </div>
                       <div className="text-sm text-slate-600 dark:text-slate-400">
                         {selectedEntry.positiveThing}
@@ -364,26 +348,26 @@ export default function CalendarPage() {
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
                   <Link
                     href={`/today?date=${selectedEntry.date}`}
-                    className="block w-full px-4 py-2 rounded text-center bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-100 hover:bg-blue-200 dark:hover:bg-blue-800 font-medium"
+                    className="btn-primary w-full"
                   >
-                    ✏️ Modifica
+                    Modifica
                   </Link>
 
                   {deleteConfirm === selectedEntry.date ? (
                     <div className="space-y-2">
-                      <p className="text-sm text-red-600 dark:text-red-400 font-medium">
-                        Sei sicuro? Non si può annullare!
+                      <p role="alert" className="text-sm text-red-700 dark:text-red-400 font-medium">
+                        Eliminare questo giorno? Non si può annullare.
                       </p>
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleDelete(selectedEntry.date)}
-                          className="flex-1 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-medium"
+                          className="btn-danger flex-1"
                         >
-                          🗑️ Elimina
+                          Elimina
                         </button>
                         <button
                           onClick={() => setDeleteConfirm(null)}
-                          className="flex-1 px-4 py-2 rounded bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600 font-medium"
+                          className="btn-secondary flex-1"
                         >
                           Annulla
                         </button>
@@ -392,18 +376,18 @@ export default function CalendarPage() {
                   ) : (
                     <button
                       onClick={() => setDeleteConfirm(selectedEntry.date)}
-                      className="w-full px-4 py-2 rounded bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 hover:bg-red-200 dark:hover:bg-red-800 font-medium"
+                      className="btn w-full text-red-700 hover:bg-red-50"
                     >
-                      🗑️ Elimina Record
+                      Elimina giorno
                     </button>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="card text-center py-8 text-slate-500 dark:text-slate-400">
-                <p>Seleziona un giorno dal calendario</p>
-                <p className="text-sm mt-2">I giorni colorati hanno un record</p>
-                <p className="text-sm mt-1">Clicca un giorno vuoto per crearne uno</p>
+              <div className="card py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                <p className="font-medium text-slate-700 dark:text-slate-300">Seleziona un giorno</p>
+                <p className="mt-2">I giorni colorati hanno già una registrazione.</p>
+                <p className="mt-1">Tocca un giorno vuoto per compilarlo.</p>
               </div>
             )}
           </div>

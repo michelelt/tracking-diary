@@ -117,10 +117,10 @@ function EntryEditor() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-slate-50 p-4 dark:bg-slate-900 pb-24">
-        <div className="mx-auto max-w-2xl space-y-6">
+      <div className="page !pb-32">
+        <div className="mx-auto max-w-2xl space-y-4">
           {/* Header */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             {isEditing && (
               <Link
                 href="/calendar"
@@ -129,68 +129,74 @@ function EntryEditor() {
                 ← Torna al calendario
               </Link>
             )}
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-              {isEditing ? '✏️' : '📝'} {new Date(today).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              {isEditing ? 'Modifica giorno' : 'Oggi'}
+            </p>
+            <h1 className="page-title first-letter:uppercase">
+              {new Date(today).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
             </h1>
           </div>
 
-          {/* Sections */}
-          <div className="card">
+          {/* Sections: one card, one row per metric */}
+          <div className="card divide-y divide-slate-200 !p-0 dark:divide-slate-700">
+          <div className="p-4">
             <SleepSection
               value={formData.sleep || undefined}
               onChange={(sleep) => handleChange({ sleep })}
             />
           </div>
 
-          <div className="card">
+          <div className="p-4">
             <EnergySection
               value={formData.energy || undefined}
               onChange={(energy) => handleChange({ energy })}
             />
           </div>
 
-          <div className="card">
+          <div className="p-4">
             <MoodSection
               value={formData.mood || undefined}
               onChange={(mood) => handleChange({ mood })}
             />
           </div>
 
-          <div className="card">
+          <div className="p-4">
             <MovementSection
               value={formData.movement || undefined}
               onChange={(movement) => handleChange({ movement })}
             />
           </div>
 
-          <div className="card">
+          <div className="p-4">
             <StimulationSection
               value={formData.stimulation || undefined}
               onChange={(stimulation) => handleChange({ stimulation })}
             />
           </div>
 
-          <div className="card">
+          <div className="p-4">
             <PositiveThingSection
               value={formData.positiveThing || undefined}
               onChange={(positiveThing) => handleChange({ positiveThing })}
             />
           </div>
 
+          </div>
+
           {/* Hint */}
-          <div className="text-center py-4 text-sm text-slate-500 dark:text-slate-400">
+          <div className="text-center text-xs text-slate-500 dark:text-slate-400">
             Compila quanto vuoi. Un giorno parziale è meglio di uno saltato.
           </div>
         </div>
 
         {/* Fixed bottom save button */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-4 safe-bottom">
+        <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 p-4 shadow-raised backdrop-blur dark:border-slate-700 dark:bg-slate-800">
           <div className="mx-auto max-w-2xl space-y-3">
             {saveMessage && (
-              <div className={`p-3 rounded text-center text-sm font-medium ${
+              <div role="status" className={`rounded-lg p-3 text-center text-sm font-medium ${
                 saveMessage.includes('✅')
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                  : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                  ? 'bg-emerald-50 text-emerald-800 dark:bg-green-900/20 dark:text-green-400'
+                  : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400'
               }`}>
                 {saveMessage}
               </div>
@@ -200,7 +206,7 @@ function EntryEditor() {
               disabled={isSaving}
               className="btn-primary w-full"
             >
-              {isSaving ? '💾 Salvataggio...' : '💾 Salva'}
+              {isSaving ? 'Salvataggio…' : 'Salva'}
             </button>
           </div>
         </div>

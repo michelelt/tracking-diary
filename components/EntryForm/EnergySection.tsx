@@ -22,19 +22,14 @@ export default function EnergySection({ value, onChange }: EnergySectionProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">⚡ Energia</h2>
+    <div className="space-y-1">
+      <h2 className="section-title">
+        Energia <span className="font-normal text-slate-500">· da 1 (bassa) a 10 (alta)</span>
+      </h2>
 
-      {periods.map(({ key, label, emoji }) => (
-        <div key={key}>
-          <div className="mb-3 flex items-center justify-between">
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              <span className="mr-2">{emoji}</span> {label}
-            </label>
-            <span className="text-lg font-bold text-accent">
-              {value?.[key] || '—'}
-            </span>
-          </div>
+      {periods.map(({ key, label }) => (
+        <label key={key} className="flex min-h-[40px] items-center gap-3">
+          <span className="w-20 shrink-0 text-xs font-medium text-slate-600 dark:text-slate-300">{label}</span>
           <input
             type="range"
             min="1"
@@ -43,11 +38,10 @@ export default function EnergySection({ value, onChange }: EnergySectionProps) {
             onChange={(e) => handleChange(key, parseInt(e.target.value))}
             className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-accent dark:bg-slate-700"
           />
-          <div className="mt-1 flex justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span>Bassa</span>
-            <span>Alta</span>
-          </div>
-        </div>
+          <span className="w-5 shrink-0 text-right text-sm font-semibold tabular-nums text-accent">
+            {value?.[key] || '—'}
+          </span>
+        </label>
       ))}
     </div>
   )

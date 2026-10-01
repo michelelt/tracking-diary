@@ -4,23 +4,26 @@ const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.ts', // mood colors live in lib/constants.ts
   ],
   theme: {
     extend: {
       colors: {
-        slate: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
+        accent: {
+          DEFAULT: '#0e7490', // cyan-700, AA with white text
+          hover: '#155e75', // cyan-800
+          soft: '#ecfeff', // cyan-50
         },
-        accent: '#0891b2', // cyan-600
+        success: '#059669', // emerald-600
+        warning: '#d97706', // amber-600
+        danger: '#dc2626', // red-600
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        card: '0 1px 2px rgb(15 23 42 / 0.06)',
+        raised: '0 4px 16px rgb(15 23 42 / 0.08)',
       },
       spacing: {
         safe: 'max(1rem, env(safe-area-inset-bottom))',
@@ -34,3 +37,4 @@ const config: Config = {
   plugins: [],
 }
 export default config
+

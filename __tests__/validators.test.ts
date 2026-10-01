@@ -1,5 +1,4 @@
 import { EntrySchema, SleepSchema, EnergySchema, MoodSchema } from '@/lib/validators'
-import { z } from 'zod'
 
 describe('SleepSchema', () => {
   it('should validate correct sleep data', () => {

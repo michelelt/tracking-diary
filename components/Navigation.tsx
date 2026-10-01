@@ -3,77 +3,51 @@
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
 
 export default function Navigation() {
   const pathname = usePathname()
-  const [menuOpen, setMenuOpen] = useState(false)
 
   const navItems = [
-    { href: '/today', label: 'Oggi', emoji: '📝' },
-    { href: '/calendar', label: 'Calendario', emoji: '📅' },
-    { href: '/dashboard', label: 'Dashboard', emoji: '📊' },
+    { href: '/today', label: 'Oggi' },
+    { href: '/calendar', label: 'Calendario' },
+    { href: '/dashboard', label: 'Dashboard' },
   ]
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-700 dark:bg-slate-900/80">
-      <div className="mx-auto max-w-2xl px-4 py-3">
-        <div className="flex items-center justify-between">
-          <Link href="/today" className="text-xl font-bold text-slate-900 dark:text-slate-50">
-            Baseline
-          </Link>
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 px-4 backdrop-blur md:px-6 dark:border-slate-700 dark:bg-slate-900/90">
+      {/* On mobile the links wrap onto their own full-width row, always visible */}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6">
+        <Link
+          href="/today"
+          className="flex items-baseline gap-1.5 py-3 text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-50"
+        >
+          <span aria-hidden="true" className="h-1 w-4 rounded-full bg-accent" />
+          Baseline
+        </Link>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-2 rounded-lg text-sm transition-colors ${
-                  pathname === item.href
-                    ? 'bg-accent text-white'
-                    : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
-                }`}
-              >
-                <span className="mr-1">{item.emoji}</span> {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden btn-ghost px-3 py-2"
+        <nav
+          aria-label="Principale"
+          className="order-last flex w-full gap-1 pb-2 md:order-none md:w-auto md:flex-1 md:pb-0"
+        >
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={pathname === item.href ? 'page' : undefined}
+              className={`flex min-h-[40px] flex-1 items-center justify-center rounded-lg px-3 text-sm font-medium transition-colors md:flex-none ${
+                pathname === item.href
+                  ? 'bg-accent-soft text-accent-hover'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
+              }`}
             >
-              ☰
-            </button>
+              {item.label}
+            </Link>
+          ))}
+        </nav>
 
-            <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
-              className="btn-secondary text-sm px-3 py-2"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-
-        {menuOpen && (
-          <nav className="mt-3 flex flex-col gap-2 md:hidden">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className={`px-3 py-2 rounded-lg text-sm transition-colors ${
-                  pathname === item.href
-                    ? 'bg-accent text-white'
-                    : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
-                }`}
-              >
-                <span className="mr-1">{item.emoji}</span> {item.label}
-              </Link>
-            ))}
-          </nav>
-        )}
+        <button onClick={() => signOut({ callbackUrl: '/login' })} className="btn-ghost -mr-3">
+          Esci
+        </button>
       </div>
     </header>
   )

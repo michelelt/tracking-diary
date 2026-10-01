@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Navigation from '@/components/Navigation'
 
 interface AllowedUser {
   id: string
@@ -16,6 +17,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<AllowedUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [confirmId, setConfirmId] = useState<string | null>(null)
 
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
 
@@ -49,8 +51,7 @@ export default function AdminPage() {
   }
 
   async function removeUser(id: string) {
-    if (!confirm('Rimuovi questo utente?')) return
-
+    setConfirmId(null)
     try {
       const res = await fetch('/api/admin/users', {
         method: 'DELETE',
@@ -65,7 +66,7 @@ export default function AdminPage() {
   }
 
   if (status === 'loading' || loading) {
-    return <div className="p-4">Caricamento...</div>
+    return <div className="state" role="status">Caricamento…</div>
   }
 
   if (session?.user?.email !== adminEmail) {
@@ -73,39 +74,56 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Admin - Utenti</h1>
+    <>
+      <Navigation />
+      <div className="page">
+        <div className="mx-auto max-w-2xl space-y-6">
+          <h1 className="page-title">Utenti</h1>
 
-      {error && <div className="p-3 bg-red-100 text-red-700 rounded mb-4">{error}</div>}
+          {error && (
+            <div role="alert" className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700">
+              {error}
+            </div>
+          )}
 
-      <div>
-        <h2 className="font-semibold text-lg mb-3">Utenti registrati ({users.length})</h2>
-        {users.length === 0 ? (
-          <p className="text-gray-500">Nessun utente</p>
-        ) : (
-          <div className="space-y-2">
-            {users.map(user => (
-              <div
-                key={user.id}
-                className="flex justify-between items-center p-3 border rounded"
-              >
-                <div>
-                  <p className="font-medium">{user.email}</p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <button
-                  onClick={() => removeUser(user.id)}
-                  className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
-                >
-                  Rimuovi
-                </button>
+          <div className="card">
+            <h2 className="mb-3 text-base font-semibold text-slate-900">Utenti registrati ({users.length})</h2>
+            {users.length === 0 ? (
+              <p className="py-6 text-center text-sm text-slate-500">Nessun utente registrato</p>
+            ) : (
+              <div className="divide-y divide-slate-200">
+                {users.map(user => (
+                  <div key={user.id} className="flex items-center justify-between gap-3 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-900">{user.email}</p>
+                      <p className="text-xs text-slate-500">
+                        {new Date(user.createdAt).toLocaleDateString('it-IT')}
+                      </p>
+                    </div>
+                    {confirmId === user.id ? (
+                      <div className="flex shrink-0 gap-2">
+                        <button onClick={() => removeUser(user.id)} className="btn-danger">
+                          Conferma
+                        </button>
+                        <button onClick={() => setConfirmId(null)} className="btn-secondary">
+                          Annulla
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmId(user.id)}
+                        className="btn shrink-0 text-red-700 hover:bg-red-50"
+                      >
+                        Rimuovi
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

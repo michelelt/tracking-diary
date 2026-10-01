@@ -9,20 +9,20 @@ interface StimulationSectionProps {
 
 export default function StimulationSection({ value, onChange }: StimulationSectionProps) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">📱 Stimolazione</h2>
-      <p className="text-sm text-slate-600 dark:text-slate-400">
-        Quanto tempo davanti agli schermi/scroll?
-      </p>
+    <div className="space-y-2">
+      <h2 className="section-title">
+        Stimolazione <span className="font-normal text-slate-500">· tempo su schermi e scroll</span>
+      </h2>
 
-      <div className="grid grid-cols-2 gap-2">
-        {(Object.entries(STIMULATION_LEVELS) as Array<['poco' | 'normale' | 'tanto' | 'troppo', any]>).map(([key, { label, emoji }]) => (
+      <div className="segmented">
+        {(Object.entries(STIMULATION_LEVELS) as Array<['poco' | 'normale' | 'tanto' | 'troppo', any]>).map(([key, { label }]) => (
           <button
             key={key}
             onClick={() => onChange(key)}
-            className={`chip ${value === key ? 'chip-selected' : 'chip-unselected'}`}
+            aria-pressed={value === key}
+            className={`segment ${value === key ? 'segment-selected' : ''}`}
           >
-            <span className="mr-1">{emoji}</span> {label}
+            {label}
           </button>
         ))}
       </div>

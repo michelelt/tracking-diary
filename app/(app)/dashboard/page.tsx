@@ -87,13 +87,13 @@ export default function DashboardPage() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-slate-50 p-4 dark:bg-slate-900 pb-24">
-        <div className="mx-auto max-w-7xl space-y-6">
+      <div className="page">
+        <div className="mx-auto max-w-6xl space-y-6">
           {/* Header + range filter */}
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">📊 Dashboard</h1>
-              <p className="text-slate-600 dark:text-slate-400">Una panoramica completa del tuo benessere</p>
+              <h1 className="page-title">Dashboard</h1>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Una panoramica completa del tuo benessere</p>
             </div>
             <div className="inline-flex rounded-lg bg-slate-200/70 p-1 dark:bg-slate-800">
               {RANGES.map((r) => (
@@ -113,8 +113,8 @@ export default function DashboardPage() {
           </div>
 
           {!view ? (
-            <div className="text-center py-12 text-slate-500">
-              {loading ? 'Caricamento dashboard...' : 'Nessun dato disponibile'}
+            <div className="card state" role="status">
+              {loading ? 'Caricamento…' : 'Non è stato possibile caricare i dati. Riprova tra poco.'}
             </div>
           ) : (
             // Keep the previous render visible while a new range loads
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                   value={`${view.entries.length}`}
                   detail={`su ${view.days.length} · ${view.days.length ? Math.round((view.entries.length / view.days.length) * 100) : 0}%`}
                 />
-                <StatTile label="Streak 🔥" value={`${data!.streak}`} detail={data!.streak === 1 ? 'giorno di fila' : 'giorni di fila'} />
+                <StatTile label="Serie attuale" value={`${data!.streak}`} detail={data!.streak === 1 ? 'giorno di fila' : 'giorni di fila'} />
                 <StatTile
                   label="Energia media"
                   value={view.stats.energy !== null ? view.stats.energy.toFixed(1) : '–'}
@@ -148,62 +148,62 @@ export default function DashboardPage() {
                 />
               </div>
 
-              <ChartCard title="🗓️ Mappa dell'umore" subtitle="Ogni quadratino è un giorno, colorato in base al mood">
+              <ChartCard title="Mappa dell'umore" subtitle="Ogni quadratino è un giorno, colorato in base al mood">
                 <MoodHeatmap days={view.days} byDate={view.byDate} />
               </ChartCard>
 
-              <ChartCard title="😊 Andamento dell'umore" subtitle="I punti sono i singoli giorni, la linea è la media degli ultimi 7">
+              <ChartCard title="Andamento dell'umore" subtitle="I punti sono i singoli giorni, la linea è la media degli ultimi 7">
                 <MoodTrend data={view.moodTrend} />
               </ChartCard>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <ChartCard
-                  title="⚡ Energia giorno per giorno"
+                  title="Energia giorno per giorno"
                   subtitle="La linea è la media del giorno, la fascia va dal minimo al massimo"
                   className="lg:col-span-2"
                 >
                   <EnergyBand data={view.energyTrend} />
                 </ChartCard>
-                <ChartCard title="🌗 La tua curva di energia" subtitle="Come cambia l'energia da mattina a sera">
+                <ChartCard title="La tua curva di energia" subtitle="Come cambia l'energia da mattina a sera">
                   <EnergyDayProfile rows={view.profile.rows} dates={view.profile.dates} />
                 </ChartCard>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <ChartCard
-                  title="🌙 Orari del sonno"
+                  title="Orari del sonno"
                   subtitle="Da quando vai a letto a quando ti svegli, notte per notte"
                   className="lg:col-span-2"
                 >
                   <SleepSchedule nights={view.nights} />
                 </ChartCard>
-                <ChartCard title="😴 Sonno ed energia" subtitle={view.sleepEnergySubtitle}>
+                <ChartCard title="Sonno ed energia" subtitle={view.sleepEnergySubtitle}>
                   <SleepVsEnergy points={view.sleepEnergy} />
                 </ChartCard>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <ChartCard title="🎭 Distribuzione dell'umore">
+                <ChartCard title="Distribuzione dell'umore">
                   <MoodDonut counts={view.moodCounts} />
                 </ChartCard>
-                <ChartCard title="🏃 Movimento">
+                <ChartCard title="Movimento">
                   <MovementDonut
                     counts={view.movementCounts}
                     activeDays={view.activeDays}
                     trackedDays={view.movementDays}
                   />
                 </ChartCard>
-                <ChartCard title="🕸️ Ritmo settimanale" subtitle="Energia e umore medi per giorno della settimana" className="md:col-span-2 lg:col-span-1">
+                <ChartCard title="Ritmo settimanale" subtitle="Energia e umore medi per giorno della settimana" className="md:col-span-2 lg:col-span-1">
                   <WeekdayRadar data={view.weekdays} />
                 </ChartCard>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ChartCard title="📱 Stimolazione e umore" subtitle="Quanti giorni per ogni combinazione">
+                <ChartCard title="Stimolazione e umore" subtitle="Quanti giorni per ogni combinazione">
                   <StimulationMoodMatrix counts={view.stimMood} />
                 </ChartCard>
                 <ChartCard
-                  title="🔗 Cosa va insieme"
+                  title="Cosa va insieme"
                   subtitle="Correlazione tra le metriche: da -1 (opposte) a +1 (salgono insieme)"
                 >
                   <CorrelationMatrix labels={view.correlationLabels} correlations={view.correlations} />
@@ -238,7 +238,7 @@ function StatTile({
       <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</div>
       <div className="flex items-end justify-between gap-2">
         <div>
-          <div className="text-3xl font-bold text-slate-900 dark:text-slate-50 leading-none">{value}</div>
+          <div className="text-3xl font-semibold tabular-nums tracking-tight text-slate-900 dark:text-slate-50 leading-none">{value}</div>
           <div className="text-xs text-slate-500 mt-1.5">{detail}</div>
         </div>
         {hasSpark && (

@@ -2,6 +2,8 @@
 
 A minimalist web app for tracking 6 personal metrics in 2 minutes a day. Designed for mobile, offline-tolerant, and built on a free stack (Vercel, Supabase free).
 
+Deployed here: https://tracking-diary.vercel.app/
+
 **Status**: 🚧 Work in progress (Phase 1: setup complete, auth and DB configured)
 
 ## Requirements

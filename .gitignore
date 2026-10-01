@@ -68,3 +68,4 @@ pids
 
 # python
 .venv
+.env*

@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation'
 import { MOODS } from '@/lib/constants'
 import { Entry } from '@/lib/validators'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
 interface CalendarEntry extends Entry {
@@ -13,6 +14,7 @@ interface CalendarEntry extends Entry {
 }
 
 export default function CalendarPage() {
+  const router = useRouter()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [entries, setEntries] = useState<Record<string, CalendarEntry>>({})
   const [loading, setLoading] = useState(true)
@@ -91,7 +93,15 @@ export default function CalendarPage() {
 
   const handleSelectDay = (day: number) => {
     const dateStr = getDateString(day)
-    setSelectedEntry(entries[dateStr] || null)
+    const entry = entries[dateStr]
+
+    // Empty day: go straight to creating a new entry for that date
+    if (!entry) {
+      router.push(`/today?date=${dateStr}`)
+      return
+    }
+
+    setSelectedEntry(entry)
     setDeleteConfirm(null)
   }
 
@@ -369,6 +379,7 @@ export default function CalendarPage() {
               <div className="card text-center py-8 text-slate-500 dark:text-slate-400">
                 <p>Seleziona un giorno dal calendario</p>
                 <p className="text-sm mt-2">I giorni colorati hanno un record</p>
+                <p className="text-sm mt-1">Clicca un giorno vuoto per crearne uno</p>
               </div>
             )}
           </div>

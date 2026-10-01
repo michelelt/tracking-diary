@@ -1,9 +1,10 @@
 'use client'
 
 import Navigation from '@/components/Navigation'
-import { MOODS } from '@/lib/constants'
+import { MOODS, MOVEMENT_TYPES, SLEEP_FEELINGS, STIMULATION_LEVELS } from '@/lib/constants'
 import { localDateString } from '@/lib/dates'
 import { Entry } from '@/lib/validators'
+import { CalendarDays, ChevronLeft, ChevronRight, Pencil, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -79,9 +80,9 @@ export default function CalendarPage() {
   }
 
   const getMoodColor = (mood?: string | null) => {
-    if (!mood) return 'bg-slate-100 dark:bg-slate-700'
+    if (!mood) return 'bg-surface text-ink'
     const moodConfig = MOODS[mood as keyof typeof MOODS]
-    return moodConfig?.color || 'bg-slate-100 dark:bg-slate-700'
+    return moodConfig?.color || 'bg-surface text-ink'
   }
 
   const getDateString = (day: number) => localDateString(new Date(year, month, day))
@@ -133,146 +134,166 @@ export default function CalendarPage() {
     year: 'numeric',
   })
 
+  // Stored keys -> readable labels
+  const labelOf = (map: Record<string, { label: string }>, key: string) => map[key]?.label ?? key
+
   return (
     <>
       <Navigation />
       {futureBanner && (
-        <div
-          role="alert"
-          onClick={() => setFutureBanner(false)}
-          className="fixed top-20 left-1/2 z-50 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 cursor-pointer rounded-lg bg-slate-900 px-4 py-3 text-center text-sm font-medium text-white shadow-lg dark:bg-slate-50 dark:text-slate-900"
-        >
-          Come fai a sapere come starai nel futuro?
+        <div className="pointer-events-none fixed inset-x-0 top-20 z-50 flex justify-center px-4">
+          <div
+            role="alert"
+            onClick={() => setFutureBanner(false)}
+            className="pointer-events-auto animate-rise cursor-pointer rounded-control bg-ink px-4 py-3 text-center text-sm font-semibold text-bg"
+          >
+            Un giorno alla volta. Il futuro può aspettare.
+          </div>
         </div>
       )}
       <div className="page">
-        <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Calendar */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-6 lg:col-span-2">
             {/* Header + month navigation */}
             <div className="flex items-center justify-between gap-3">
               <h1 className="page-title capitalize">{monthName}</h1>
-              <div className="flex items-center gap-2">
-                <button onClick={handlePrevMonth} aria-label="Mese precedente" className="btn-secondary">
-                  ←
+              <div className="flex items-center gap-1">
+                <button onClick={handlePrevMonth} aria-label="Mese precedente" className="btn-ghost !px-3">
+                  <ChevronLeft size={20} aria-hidden="true" />
                 </button>
                 <button onClick={handleToday} className="btn-secondary">
                   Oggi
                 </button>
-                <button onClick={handleNextMonth} aria-label="Mese successivo" className="btn-secondary">
-                  →
+                <button onClick={handleNextMonth} aria-label="Mese successivo" className="btn-ghost !px-3">
+                  <ChevronRight size={20} aria-hidden="true" />
                 </button>
               </div>
             </div>
 
             {/* Calendar Grid */}
-            <div className="card">
+            <div>
+              {/* Day headers */}
+              <div className="mb-2 grid grid-cols-7 gap-1 sm:gap-2">
+                {['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'].map((day) => (
+                  <div key={day} className="label py-2 text-center">
+                    {day}
+                  </div>
+                ))}
+              </div>
+
               {loading ? (
-                <div className="state min-h-[24rem]" role="status">Caricamento…</div>
+                <div role="status" aria-label="Caricamento" className="grid grid-cols-7 gap-1 sm:gap-2">
+                  {Array.from({ length: 35 }, (_, i) => (
+                    <div key={i} className="skeleton aspect-square" />
+                  ))}
+                </div>
               ) : (
-                <>
-                  {/* Day headers */}
-                  <div className="grid grid-cols-7 gap-1 mb-2">
-                    {['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'].map((day) => (
-                      <div
+                <div className="grid grid-cols-7 gap-1 sm:gap-2">
+                  {emptyDays.map((_, i) => (
+                    <div key={`empty-${i}`} className="aspect-square" />
+                  ))}
+
+                  {days.map((day) => {
+                    const dateStr = getDateString(day)
+                    const entry = entries[dateStr]
+                    const moodColor = getMoodColor(entry?.mood)
+                    const isToday = todayStr === dateStr
+                    const isSelected = selectedEntry?.date === dateStr
+
+                    return (
+                      <button
                         key={day}
-                        className="text-center text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 py-2"
+                        onClick={() => handleSelectDay(day)}
+                        aria-current={isToday ? 'date' : undefined}
+                        aria-label={`${day}${entry?.mood ? `, umore ${labelOf(MOODS, entry.mood).toLowerCase()}` : entry ? ', registrato' : ''}`}
+                        className={`relative aspect-square rounded-control text-base font-bold tabular-nums transition duration-200 active:scale-[0.95] ${
+                          entry ? moodColor : 'text-muted hover:bg-surface'
+                        } ${
+                          isSelected
+                            ? 'ring-2 ring-ink ring-offset-2 ring-offset-bg'
+                            : isToday
+                              ? 'ring-2 ring-accent ring-offset-2 ring-offset-bg'
+                              : ''
+                        } ${dateStr > todayStr ? 'opacity-40' : ''}`}
                       >
                         {day}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Calendar days */}
-                  <div className="grid grid-cols-7 gap-1">
-                    {emptyDays.map((_, i) => (
-                      <div key={`empty-${i}`} className="aspect-square" />
-                    ))}
-
-                    {days.map((day) => {
-                      const dateStr = getDateString(day)
-                      const entry = entries[dateStr]
-                      const moodColor = getMoodColor(entry?.mood)
-                      const isToday = todayStr === dateStr
-                      const isSelected = selectedEntry?.date === dateStr
-
-                      return (
-                        <button
-                          key={day}
-                          onClick={() => handleSelectDay(day)}
-                          aria-current={isToday ? 'date' : undefined}
-                          className={`aspect-square p-1 sm:p-2 rounded-lg text-center text-sm transition ${moodColor} ${
-                            isToday ? 'ring-2 ring-accent' : 'hover:brightness-95'
-                          } ${isSelected ? 'ring-2 ring-slate-900' : ''} ${
-                            dateStr > todayStr ? 'opacity-50' : ''
-                          }`}
-                        >
-                          <div className={`font-medium tabular-nums ${entry?.mood === 'molto_buono' ? 'text-white' : 'text-slate-900'}`}>
-                            {day}
-                          </div>
-                          {entry && (
-                            <div className="text-xs mt-1 text-slate-700 dark:text-slate-300">
-                              {entry.mood ? MOODS[entry.mood as keyof typeof MOODS]?.emoji : '✓'}
-                            </div>
-                          )}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </>
+                        {/* Filled in, but without a mood */}
+                        {entry && !entry.mood && (
+                          <span aria-hidden="true" className="absolute bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-accent" />
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
               )}
+
+              {/* Legend */}
+              <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2">
+                {Object.entries(MOODS).map(([key, { label, color }]) => (
+                  <span key={key} className="inline-flex items-center gap-1.5 text-xs text-muted">
+                    <span className={`h-2.5 w-2.5 rounded-sm ${color}`} />
+                    {label}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Entry Details Panel */}
           <div className="lg:col-span-1">
             {selectedEntry ? (
-              <div className="card space-y-4">
-                <div className="space-y-2">
-                  <h2 className="text-base font-semibold text-slate-900 first-letter:uppercase dark:text-slate-50">
-                    {new Date(selectedEntry.date).toLocaleDateString('it-IT', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </h2>
+              <div key={selectedEntry.date} className="card animate-rise space-y-6">
+                <h2 className="section-title first-letter:uppercase">
+                  {new Date(selectedEntry.date).toLocaleDateString('it-IT', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </h2>
 
+                <div className="divide-y divide-line">
                   {/* Sleep */}
                   {selectedEntry.sleep && (
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        Sonno
-                      </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
-                        {selectedEntry.sleep.hoursSlept && (
-                          <div>Ore: {selectedEntry.sleep.hoursSlept}h</div>
-                        )}
-                        {selectedEntry.sleep.bedTime && (
-                          <div>A letto: {selectedEntry.sleep.bedTime}</div>
-                        )}
-                        {selectedEntry.sleep.feeling && (
-                          <div>Sensazione: {selectedEntry.sleep.feeling}</div>
-                        )}
+                    <div className="space-y-2 py-4">
+                      <div className="label">Sonno</div>
+                      {selectedEntry.sleep.hoursSlept && (
+                        <div className="stat text-4xl">
+                          {selectedEntry.sleep.hoursSlept}
+                          <span className="text-lg font-bold text-faint">h</span>
+                        </div>
+                      )}
+                      <div className="text-sm text-muted">
+                        {[
+                          selectedEntry.sleep.bedTime && `A letto alle ${selectedEntry.sleep.bedTime}`,
+                          selectedEntry.sleep.feeling && `Risveglio: ${labelOf(SLEEP_FEELINGS, selectedEntry.sleep.feeling).toLowerCase()}`,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ')}
                       </div>
                     </div>
                   )}
 
                   {/* Energy */}
                   {selectedEntry.energy && (
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        Energia
-                      </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
-                        {selectedEntry.energy.morning && (
-                          <div>Mattina: {selectedEntry.energy.morning}/10</div>
-                        )}
-                        {selectedEntry.energy.afternoon && (
-                          <div>Pomeriggio: {selectedEntry.energy.afternoon}/10</div>
-                        )}
-                        {selectedEntry.energy.evening && (
-                          <div>Sera: {selectedEntry.energy.evening}/10</div>
+                    <div className="space-y-2 py-4">
+                      <div className="label">Energia</div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {(
+                          [
+                            ['Mattina', selectedEntry.energy.morning],
+                            ['Pomeriggio', selectedEntry.energy.afternoon],
+                            ['Sera', selectedEntry.energy.evening],
+                          ] as const
+                        ).map(
+                          ([label, level]) =>
+                            level && (
+                              <div key={label}>
+                                <div className="stat text-3xl">{level}</div>
+                                <div className="mt-1 text-xs text-muted">{label}</div>
+                              </div>
+                            )
                         )}
                       </div>
                     </div>
@@ -280,71 +301,60 @@ export default function CalendarPage() {
 
                   {/* Mood */}
                   {selectedEntry.mood && (
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        Umore
-                      </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">
-                        {selectedEntry.mood}
-                      </div>
+                    <div className="space-y-2 py-4">
+                      <div className="label">Umore</div>
+                      <div className="text-base font-bold text-ink">{labelOf(MOODS, selectedEntry.mood)}</div>
                     </div>
                   )}
 
                   {/* Movement */}
                   {selectedEntry.movement && (
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        Movimento
+                    <div className="space-y-2 py-4">
+                      <div className="label">Movimento</div>
+                      <div className="text-base font-bold text-ink">
+                        {selectedEntry.movement.types
+                          ?.map((type) => MOVEMENT_TYPES.find((m) => m.id === type)?.label ?? type)
+                          .join(', ')}
                       </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
-                        {selectedEntry.movement.types?.join(', ')}
-                        {selectedEntry.movement.notes && (
-                          <div className="text-xs text-slate-500 mt-1">
-                            Note: {selectedEntry.movement.notes}
-                          </div>
-                        )}
-                      </div>
+                      {selectedEntry.movement.notes && (
+                        <div className="text-sm text-muted">{selectedEntry.movement.notes}</div>
+                      )}
                     </div>
                   )}
 
                   {/* Stimulation */}
                   {selectedEntry.stimulation && (
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        Stimolazione
-                      </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">
-                        {selectedEntry.stimulation}
+                    <div className="space-y-2 py-4">
+                      <div className="label">Stimolazione</div>
+                      <div className="text-base font-bold text-ink">
+                        {labelOf(STIMULATION_LEVELS, selectedEntry.stimulation)}
                       </div>
                     </div>
                   )}
 
                   {/* Positive Thing */}
                   {selectedEntry.positiveThing && (
-                    <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-2">
-                        Una cosa bella
-                      </div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">
-                        {selectedEntry.positiveThing}
-                      </div>
+                    <div className="space-y-2 py-4">
+                      <div className="label">Una cosa bella</div>
+                      <div className="text-base text-ink">{selectedEntry.positiveThing}</div>
                     </div>
                   )}
                 </div>
 
                 {/* Actions */}
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
+                <div className="space-y-2">
                   <Link
                     href={`/today?date=${selectedEntry.date}`}
                     className="btn-primary w-full"
                   >
+                    <Pencil size={18} aria-hidden="true" />
                     Modifica
                   </Link>
 
                   {deleteConfirm === selectedEntry.date ? (
-                    <div className="space-y-2">
-                      <p role="alert" className="text-sm text-red-700 dark:text-red-400 font-medium">
-                        Eliminare questo giorno? Non si può annullare.
+                    <div className="animate-rise space-y-2">
+                      <p role="alert" className="text-sm font-semibold text-danger">
+                        Eliminare questo giorno? Non si torna indietro.
                       </p>
                       <div className="flex gap-2">
                         <button
@@ -364,18 +374,19 @@ export default function CalendarPage() {
                   ) : (
                     <button
                       onClick={() => setDeleteConfirm(selectedEntry.date)}
-                      className="btn w-full text-red-700 hover:bg-red-50"
+                      className="btn-danger-quiet w-full"
                     >
+                      <Trash2 size={18} aria-hidden="true" />
                       Elimina giorno
                     </button>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="card py-8 text-center text-sm text-slate-500 dark:text-slate-400">
-                <p className="font-medium text-slate-700 dark:text-slate-300">Seleziona un giorno</p>
-                <p className="mt-2">I giorni colorati hanno già una registrazione.</p>
-                <p className="mt-1">Tocca un giorno vuoto per compilarlo.</p>
+              <div className="card state">
+                <CalendarDays size={24} className="text-faint" aria-hidden="true" />
+                <p className="font-semibold text-ink">Scegli un giorno</p>
+                <p>Colorato: già registrato. Vuoto: tocca e compila.</p>
               </div>
             )}
           </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { CircleAlert } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Navigation from '@/components/Navigation'
 
@@ -24,11 +25,11 @@ export default function AdminPage() {
   async function loadUsers() {
     try {
       const res = await fetch('/api/admin/users')
-      if (!res.ok) throw new Error('Failed to load users')
+      if (!res.ok) throw new Error('Utenti non caricati. Ricarica la pagina.')
       const data = await res.json()
       setUsers(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error loading users')
+      setError(err instanceof Error ? err.message : 'Utenti non caricati. Ricarica la pagina.')
     } finally {
       setLoading(false)
     }
@@ -37,10 +38,10 @@ export default function AdminPage() {
   async function approveUser(id: string) {
     try {
       const res = await fetch(`/api/admin/users/${id}`, { method: 'PATCH' })
-      if (!res.ok) throw new Error('Failed to approve user')
+      if (!res.ok) throw new Error('Approvazione non riuscita. Riprova.')
       setUsers(users.map(u => (u.id === id ? { ...u, approved: true } : u)))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error approving user')
+      setError(err instanceof Error ? err.message : 'Approvazione non riuscita. Riprova.')
     }
   }
 
@@ -52,52 +53,65 @@ export default function AdminPage() {
         body: JSON.stringify({ id }),
       })
 
-      if (!res.ok) throw new Error('Failed to remove user')
+      if (!res.ok) throw new Error('Rimozione non riuscita. Riprova.')
       setUsers(users.filter(u => u.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error removing user')
+      setError(err instanceof Error ? err.message : 'Rimozione non riuscita. Riprova.')
     }
   }
 
   if (loading) {
-    return <div className="state" role="status">Caricamento…</div>
+    return (
+      <>
+        <Navigation />
+        <div className="page">
+          <div role="status" aria-label="Caricamento" className="mx-auto max-w-2xl space-y-8">
+            <div className="skeleton h-10 w-40" />
+            <div className="skeleton h-40 !rounded-card" />
+            <div className="skeleton h-40 !rounded-card" />
+          </div>
+        </div>
+      </>
+    )
   }
 
   return (
     <>
       <Navigation />
       <div className="page">
-        <div className="mx-auto max-w-2xl space-y-6">
+        <div className="mx-auto max-w-2xl space-y-8">
           <h1 className="page-title">Utenti</h1>
 
           {error && (
-            <div role="alert" className="rounded-lg bg-red-50 p-3 text-sm font-medium text-red-700">
+            <div role="alert" className="flex items-center gap-2 rounded-control bg-danger/10 p-3 text-sm font-semibold text-danger">
+              <CircleAlert size={18} className="shrink-0" aria-hidden="true" />
               {error}
             </div>
           )}
 
           {[
-            { title: 'Richieste in attesa', empty: 'Nessuna richiesta in attesa', list: users.filter(u => !u.approved) },
-            { title: 'Utenti approvati', empty: 'Nessun utente approvato', list: users.filter(u => u.approved) },
+            { title: 'In attesa', empty: 'Nessuna richiesta. Tutto in ordine.', list: users.filter(u => !u.approved) },
+            { title: 'Approvati', empty: 'Ancora nessun utente approvato.', list: users.filter(u => u.approved) },
           ].map(({ title, empty, list }) => (
             <div key={title} className="card">
-              <h2 className="mb-3 text-base font-semibold text-slate-900">
-                {title} ({list.length})
-              </h2>
+              <div className="mb-2 flex items-baseline justify-between gap-3">
+                <h2 className="section-title">{title}</h2>
+                <span className="stat text-3xl">{list.length}</span>
+              </div>
               {list.length === 0 ? (
-                <p className="py-6 text-center text-sm text-slate-500">{empty}</p>
+                <p className="py-6 text-center text-sm text-muted">{empty}</p>
               ) : (
-                <div className="divide-y divide-slate-200">
+                <div className="divide-y divide-line">
                   {list.map(user => (
                     <div key={user.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-slate-900">{user.email}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="truncate text-sm font-semibold text-ink">{user.email}</p>
+                        <p className="text-xs tabular-nums text-muted">
                           {new Date(user.createdAt).toLocaleDateString('it-IT')}
                         </p>
                       </div>
                       {confirmId === user.id ? (
-                        <div className="flex shrink-0 gap-2">
+                        <div className="flex shrink-0 animate-rise gap-2">
                           <button onClick={() => removeUser(user.id)} className="btn-danger">
                             Conferma
                           </button>
@@ -112,10 +126,7 @@ export default function AdminPage() {
                               Approva
                             </button>
                           )}
-                          <button
-                            onClick={() => setConfirmId(user.id)}
-                            className="btn text-red-700 hover:bg-red-50"
-                          >
+                          <button onClick={() => setConfirmId(user.id)} className="btn-danger-quiet">
                             {user.approved ? 'Rimuovi' : 'Rifiuta'}
                           </button>
                         </div>

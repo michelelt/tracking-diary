@@ -1,28 +1,30 @@
+import { Armchair, Dumbbell, Footprints, Frown, Laugh, Meh, Smile, Waves } from 'lucide-react'
+
 export const SLEEP_FEELINGS = {
-  male: { label: 'Male', emoji: '😞' },
-  così_così: { label: 'Così così', emoji: '😐' },
-  bene: { label: 'Bene', emoji: '🙂' },
-  benissimo: { label: 'Benissimo', emoji: '😄' },
+  male: { label: 'Male', icon: Frown },
+  così_così: { label: 'Così così', icon: Meh },
+  bene: { label: 'Bene', icon: Smile },
+  benissimo: { label: 'Benissimo', icon: Laugh },
 }
 
 export const MOODS = {
-  // Same hues as MOOD_COLORS in lib/dashboard.ts
-  basso: { label: 'Basso', emoji: '😔', color: 'bg-[#e34948]' },
-  neutro: { label: 'Neutro', emoji: '😐', color: 'bg-[#c9c7bf]' },
-  buono: { label: 'Buono', emoji: '🙂', color: 'bg-[#5598e7]' },
-  molto_buono: { label: 'Molto buono', emoji: '😄', color: 'bg-[#184f95]' },
+  // Same tokens as MOOD_COLORS in lib/dashboard.ts
+  basso: { label: 'Basso', icon: Frown, color: 'bg-mood-basso text-mood-basso-fg' },
+  neutro: { label: 'Neutro', icon: Meh, color: 'bg-mood-neutro text-mood-neutro-fg' },
+  buono: { label: 'Buono', icon: Smile, color: 'bg-mood-buono text-mood-buono-fg' },
+  molto_buono: { label: 'Molto buono', icon: Laugh, color: 'bg-mood-molto text-mood-molto-fg' },
 }
 
 export const MOVEMENT_TYPES = [
-  { id: 'palestra', label: 'Palestra', emoji: '💪' },
-  { id: 'nuoto', label: 'Nuoto', emoji: '🏊' },
-  { id: 'altro', label: 'Altro', emoji: '🏃' },
-  { id: 'niente', label: 'Niente', emoji: '🛋️' },
+  { id: 'palestra', label: 'Palestra', icon: Dumbbell },
+  { id: 'nuoto', label: 'Nuoto', icon: Waves },
+  { id: 'altro', label: 'Altro', icon: Footprints },
+  { id: 'niente', label: 'Niente', icon: Armchair },
 ]
 
 export const STIMULATION_LEVELS = {
-  poco: { label: 'Poco', emoji: '📵' },
-  normale: { label: 'Normale', emoji: '📱' },
-  tanto: { label: 'Tanto', emoji: '📱📱' },
-  troppo: { label: 'Troppo', emoji: '😵' },
+  poco: { label: 'Poco' },
+  normale: { label: 'Normale' },
+  tanto: { label: 'Tanto' },
+  troppo: { label: 'Troppo' },
 }

@@ -2,11 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    @apply scroll-smooth;
-  }
+/*
+ * Design tokens. The single source of truth for color: tailwind.config.ts maps
+ * these to utilities (bg-bg, text-ink, bg-accent…) and lib/dashboard.ts reads
+ * them for charts. Values are RGB channels so Tailwind opacity modifiers work.
+ */
+:root {
+  color-scheme: light dark;
 
+  --bg: 255 255 255;
+  --surface: 245 245 247;
+  --line: 228 228 231;
+  --ink: 17 17 19;
+  --muted: 99 99 107;
+  --faint: 161 161 170;
+
+  --accent: 235 102 8;
+  --accent-fg: 20 10 0;
+  --accent-text: 184 74 0;
+  --accent-soft: 255 240 230;
+
+  --success: 21 128 61;
+  --danger: 220 38 38;
+  --danger-fg: 255 255 255;
+
+  /* Charts: orange + blue validated for color-blind separation on both surfaces */
+  --chart-1: 235 102 8;
+  --chart-2: 46 107 168;
+  --chart-2-fg: 255 255 255;
+  --chart-3: 154 154 162;
+  --chart-none: 212 212 216;
+
+  /* Mood: blue (low) <-> gray <-> orange (high) */
+  --mood-basso: 46 107 168;
+  --mood-basso-fg: 255 255 255;
+  --mood-neutro: 196 196 202;
+  --mood-neutro-fg: 17 17 19;
+  --mood-buono: 247 178 126;
+  --mood-buono-fg: 20 10 0;
+  --mood-molto: 235 102 8;
+  --mood-molto-fg: 20 10 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: 14 14 16;
+    --surface: 28 28 31;
+    --line: 46 46 51;
+    --ink: 245 245 247;
+    --muted: 161 161 170;
+    --faint: 113 113 122;
+
+    --accent-text: 255 138 61;
+    --accent-soft: 51 26 8;
+
+    --success: 74 222 128;
+    --danger: 248 113 113;
+    --danger-fg: 26 5 5;
+
+    --chart-2: 79 138 212;
+    --chart-2-fg: 14 14 16;
+    --chart-3: 110 110 118;
+    --chart-none: 58 58 63;
+
+    --mood-basso: 79 138 212;
+    --mood-basso-fg: 14 14 16;
+    --mood-neutro: 90 90 98;
+    --mood-neutro-fg: 245 245 247;
+    --mood-buono: 158 78 22;
+    --mood-buono-fg: 255 255 255;
+  }
+}
+
+@layer base {
   body {
     @apply antialiased;
   }
@@ -16,89 +84,107 @@
   }
 
   :focus-visible {
-    outline: 2px solid theme('colors.accent.DEFAULT');
+    outline: 2px solid rgb(var(--accent));
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors min-h-[44px] min-w-[44px] touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex min-h-[48px] min-w-[48px] items-center justify-center gap-2 rounded-control px-5 text-sm font-semibold transition duration-200 touch-manipulation active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn bg-accent text-white hover:bg-accent-hover active:bg-accent-hover;
+    @apply btn bg-accent text-accent-fg hover:brightness-110;
   }
 
   .btn-secondary {
-    @apply btn border border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-700;
+    @apply btn border border-line bg-bg text-ink hover:bg-surface;
   }
 
   .btn-ghost {
-    @apply btn text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800;
+    @apply btn text-muted hover:bg-surface hover:text-ink;
   }
 
   .btn-danger {
-    @apply btn bg-danger text-white hover:bg-red-700;
+    @apply btn bg-danger text-danger-fg hover:brightness-110;
+  }
+
+  .btn-danger-quiet {
+    @apply btn text-danger hover:bg-danger/10;
   }
 
   .chip {
-    @apply inline-flex items-center justify-center rounded-full border px-3 py-1.5 text-sm font-medium transition-colors min-h-[44px] touch-manipulation cursor-pointer;
+    @apply inline-flex min-h-[48px] cursor-pointer items-center justify-center gap-1.5 rounded-control border px-3 text-sm font-semibold transition duration-200 touch-manipulation active:scale-[0.97];
   }
 
+  /* Selection is ink, not accent: the accent belongs to the screen's one main action */
   .chip-selected {
-    @apply border-accent bg-accent-soft font-semibold text-accent-hover dark:bg-accent dark:text-white;
+    @apply border-ink bg-ink text-bg;
   }
 
   .chip-unselected {
-    @apply border-slate-300 bg-white text-slate-700 hover:border-accent hover:text-accent-hover dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300;
+    @apply border-line bg-bg text-muted hover:border-ink hover:text-ink;
   }
 
   /* One-row choice between ordered levels */
   .segmented {
-    @apply grid grid-cols-4 gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-700;
+    @apply grid grid-cols-4 gap-1 rounded-control bg-surface p-1;
   }
 
   .segment {
-    @apply flex min-h-[44px] flex-col items-center justify-center rounded-md px-1 py-1 text-xs font-medium leading-tight text-slate-600 transition-colors touch-manipulation hover:text-slate-900 dark:text-slate-300;
+    @apply flex min-h-[48px] flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-xs font-semibold leading-tight text-muted transition duration-200 touch-manipulation hover:text-ink active:scale-[0.97];
   }
 
   .segment-selected {
-    @apply bg-white font-semibold text-accent-hover shadow-card ring-1 ring-accent hover:text-accent-hover dark:bg-slate-900 dark:text-white;
+    @apply bg-ink text-bg hover:text-bg;
+  }
+
+  .label {
+    @apply text-[11px] font-semibold uppercase tracking-label text-muted;
   }
 
   .section-title {
-    @apply text-sm font-semibold text-slate-900 dark:text-slate-50;
+    @apply text-lg font-bold tracking-tight text-ink;
+  }
+
+  /* Hero numbers */
+  .stat {
+    @apply font-black tabular-nums leading-none tracking-tight text-ink;
   }
 
   .input-field {
-    @apply w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-base placeholder-slate-400 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 dark:border-slate-600 dark:bg-slate-800 dark:placeholder-slate-500;
+    @apply min-h-[48px] w-full rounded-control border border-line bg-bg px-4 py-2 text-base text-ink placeholder-faint transition-colors duration-200 focus:border-ink focus:outline-none;
   }
 
   .card {
-    @apply rounded-xl border border-slate-200 bg-white p-5 shadow-card dark:border-slate-700 dark:bg-slate-800;
+    @apply rounded-card border border-line bg-bg p-5 md:p-6;
   }
 
+  /* pb clears the mobile tab bar */
   .page {
-    @apply min-h-screen bg-slate-50 px-4 pb-24 pt-6 md:px-6 dark:bg-slate-900;
+    @apply min-h-screen bg-bg px-4 pb-28 pt-8 md:px-8 md:pb-16;
   }
 
   .page-title {
-    @apply text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-50;
+    @apply text-3xl font-black tracking-tight text-ink md:text-4xl;
   }
 
-  /* Loading / empty / error placeholder */
+  /* Empty / error placeholder */
   .state {
-    @apply flex min-h-[12rem] items-center justify-center px-4 text-center text-sm text-slate-500 dark:text-slate-400;
+    @apply flex min-h-[12rem] flex-col items-center justify-center gap-2 px-4 text-center text-sm text-muted;
   }
 
-  .section-divider {
-    @apply my-6 border-t border-slate-200 dark:border-slate-700;
+  .skeleton {
+    @apply animate-pulse rounded-control bg-surface;
   }
 }
-
-/* Smooth color transitions for dark mode */
-html {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-

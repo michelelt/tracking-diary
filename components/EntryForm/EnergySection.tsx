@@ -1,6 +1,7 @@
 'use client'
 
 import { Energy as EnergyData } from '@/lib/validators'
+import { Moon, Sun, Sunrise } from 'lucide-react'
 
 interface EnergySectionProps {
   value?: EnergyData
@@ -9,9 +10,9 @@ interface EnergySectionProps {
 
 export default function EnergySection({ value, onChange }: EnergySectionProps) {
   const periods = [
-    { key: 'morning' as const, label: 'Mattina', emoji: '🌅' },
-    { key: 'afternoon' as const, label: 'Pomeriggio', emoji: '☀️' },
-    { key: 'evening' as const, label: 'Sera', emoji: '🌙' },
+    { key: 'morning' as const, label: 'Mattina', icon: Sunrise },
+    { key: 'afternoon' as const, label: 'Pomeriggio', icon: Sun },
+    { key: 'evening' as const, label: 'Sera', icon: Moon },
   ]
 
   const handleChange = (period: 'morning' | 'afternoon' | 'evening', level: number) => {
@@ -22,24 +23,29 @@ export default function EnergySection({ value, onChange }: EnergySectionProps) {
   }
 
   return (
-    <div className="space-y-1">
-      <h2 className="section-title">
-        Energia <span className="font-normal text-slate-500">· da 1 (bassa) a 10 (alta)</span>
-      </h2>
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="section-title">Energia</h2>
+        <span className="label">Da 1 a 10</span>
+      </div>
 
-      {periods.map(({ key, label }) => (
-        <label key={key} className="flex min-h-[40px] items-center gap-3">
-          <span className="w-20 shrink-0 text-xs font-medium text-slate-600 dark:text-slate-300">{label}</span>
+      {periods.map(({ key, label, icon: Icon }) => (
+        <label key={key} className="flex min-h-[48px] items-center gap-3">
+          <span className="flex w-28 shrink-0 items-center gap-2 text-sm font-medium text-muted">
+            <Icon size={18} aria-hidden="true" />
+            {label}
+          </span>
           <input
             type="range"
             min="1"
             max="10"
             value={value?.[key] || ''}
             onChange={(e) => handleChange(key, parseInt(e.target.value))}
-            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-accent dark:bg-slate-700"
+            // Unset sliders stay gray so the default thumb position doesn't read as a value
+            className={`h-2 w-full cursor-pointer appearance-none rounded-full bg-surface ${value?.[key] ? 'accent-accent' : 'accent-faint'}`}
           />
-          <span className="w-5 shrink-0 text-right text-sm font-semibold tabular-nums text-accent">
-            {value?.[key] || '—'}
+          <span className={`stat w-8 shrink-0 text-right text-2xl ${value?.[key] ? '' : '!text-faint'}`}>
+            {value?.[key] || '–'}
           </span>
         </label>
       ))}

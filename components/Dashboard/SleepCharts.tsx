@@ -40,7 +40,7 @@ export function SleepSchedule({ nights }: { nights: Night[] }) {
   const [ref, width] = useWidth<HTMLDivElement>()
   const [hovered, setHovered] = useState<number | null>(null)
 
-  if (nights.length === 0) return <EmptyState message="Aggiungi gli orari del sonno per vedere questo grafico" />
+  if (nights.length === 0) return <EmptyState message="Segna a che ora vai a letto e ti svegli: il grafico parte da lì." />
 
   const minY = Math.floor((Math.min(...nights.map((n) => n.bed)) - 30) / 60) * 60
   const maxY = Math.ceil((Math.max(...nights.map((n) => n.wake)) + 30) / 60) * 60
@@ -89,7 +89,7 @@ export function SleepSchedule({ nights }: { nights: Night[] }) {
                   stroke={color}
                   strokeOpacity={0.5}
                 />
-                <text x={width - MARGIN.right + 6} y={y(v)} dy="-0.2em" fontSize={11} fontWeight={600} fill="#334155">
+                <text x={width - MARGIN.right + 6} y={y(v)} dy="-0.2em" fontSize={11} fontWeight={700} fill={COLORS.ink}>
                   {minutesToTime(v)}
                 </text>
                 <text x={width - MARGIN.right + 6} y={y(v)} dy="1em" fontSize={10} fill={COLORS.axis}>
@@ -110,8 +110,8 @@ export function SleepSchedule({ nights }: { nights: Night[] }) {
                   strokeWidth={capsule}
                   strokeLinecap="round"
                 />
-                <circle cx={x(i)} cy={y(n.bed)} r={dotR} fill={COLORS.series1} stroke="#fff" strokeWidth={1.5} />
-                <circle cx={x(i)} cy={y(n.wake)} r={dotR} fill={COLORS.series2} stroke="#fff" strokeWidth={1.5} />
+                <circle cx={x(i)} cy={y(n.bed)} r={dotR} fill={COLORS.series1} stroke={COLORS.surface} strokeWidth={1.5} />
+                <circle cx={x(i)} cy={y(n.wake)} r={dotR} fill={COLORS.series2} stroke={COLORS.surface} strokeWidth={1.5} />
                 {i % labelEvery === 0 && (
                   <text x={x(i)} y={HEIGHT - 8} textAnchor="middle" fontSize={11} fill={COLORS.axis}>
                     {formatShortDate(n.date)}
@@ -164,7 +164,7 @@ interface SleepEnergyPoint {
 
 // Does sleeping more give more energy? One dot per day, colored by mood, with a trend line
 export function SleepVsEnergy({ points }: { points: SleepEnergyPoint[] }) {
-  if (points.length < 3) return <EmptyState message="Servono almeno 3 giorni con sonno ed energia" />
+  if (points.length < 3) return <EmptyState message="Bastano 3 giorni con sonno ed energia. Ci sei quasi." />
 
   const fit = linearFit(points.map((p) => [p.hours, p.energy]))
   const xs = points.map((p) => p.hours)
@@ -206,11 +206,7 @@ export function SleepVsEnergy({ points }: { points: SleepEnergyPoint[] }) {
                 <TooltipBox title={formatLongDate(p.date)}>
                   <div>Sonno: {p.hours}h</div>
                   <div>Energia media: {p.energy.toFixed(1)}</div>
-                  {mood && (
-                    <div>
-                      {mood.emoji} {mood.label}
-                    </div>
-                  )}
+                  {mood && <div>{mood.label}</div>}
                 </TooltipBox>
               )
             }}
@@ -221,7 +217,7 @@ export function SleepVsEnergy({ points }: { points: SleepEnergyPoint[] }) {
                 { x: minX, y: clampY(fit.intercept + fit.slope * minX) },
                 { x: maxX, y: clampY(fit.intercept + fit.slope * maxX) },
               ]}
-              stroke="#475569"
+              stroke={COLORS.ink}
               strokeWidth={1.5}
               strokeOpacity={0.6}
               ifOverflow="hidden"
@@ -232,7 +228,7 @@ export function SleepVsEnergy({ points }: { points: SleepEnergyPoint[] }) {
               <Cell
                 key={p.date}
                 fill={p.mood ? MOOD_COLORS[p.mood] : COLORS.none}
-                stroke="#fff"
+                stroke={COLORS.surface}
                 strokeWidth={2}
               />
             ))}
@@ -243,7 +239,7 @@ export function SleepVsEnergy({ points }: { points: SleepEnergyPoint[] }) {
         {MOOD_ORDER.map((mood) => (
           <LegendItem key={mood} color={MOOD_COLORS[mood]} label={MOODS[mood].label} />
         ))}
-        <LegendItem color="#475569" label="Tendenza" round={false} />
+        <LegendItem color={COLORS.ink} label="Tendenza" round={false} />
       </div>
     </div>
   )

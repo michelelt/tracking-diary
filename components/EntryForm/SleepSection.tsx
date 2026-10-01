@@ -26,60 +26,57 @@ export default function SleepSection({ value, onChange }: SleepSectionProps) {
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
+    <div className="space-y-3">
+      <div className="flex items-end justify-between gap-2">
         <h2 className="section-title">Sonno</h2>
         {value?.hoursSlept && (
-          <span className="text-xs font-medium tabular-nums text-accent">{value.hoursSlept}h dormite</span>
+          <p className="flex items-baseline gap-1.5">
+            <span className="stat text-4xl">{value.hoursSlept}</span>
+            <span className="label">ore dormite</span>
+          </p>
         )}
       </div>
 
       <div className="grid grid-cols-3 gap-2">
-            <div>
-              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400">
-                A letto
-              </label>
-              <input
-                type="time"
-                value={value?.bedTime || ''}
-                onChange={(e) => handleTimeChange('bedTime', e.target.value)}
-                className="input-field !px-2 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400">
-                Addormentato
-              </label>
-              <input
-                type="time"
-                value={value?.fallAsleepTime || ''}
-                onChange={(e) => handleTimeChange('fallAsleepTime', e.target.value)}
-                className="input-field !px-2 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400">
-                Sveglio
-              </label>
-              <input
-                type="time"
-                value={value?.wakeUpTime || ''}
-                onChange={(e) => handleTimeChange('wakeUpTime', e.target.value)}
-                className="input-field !px-2 text-sm"
-              />
-            </div>
+        <label className="space-y-1">
+          <span className="label block truncate">A letto</span>
+          <input
+            type="time"
+            value={value?.bedTime || ''}
+            onChange={(e) => handleTimeChange('bedTime', e.target.value)}
+            className="input-field !px-2 text-center font-semibold tabular-nums"
+          />
+        </label>
+        <label className="space-y-1">
+          <span className="label block truncate">Addormentato</span>
+          <input
+            type="time"
+            value={value?.fallAsleepTime || ''}
+            onChange={(e) => handleTimeChange('fallAsleepTime', e.target.value)}
+            className="input-field !px-2 text-center font-semibold tabular-nums"
+          />
+        </label>
+        <label className="space-y-1">
+          <span className="label block truncate">Sveglio</span>
+          <input
+            type="time"
+            value={value?.wakeUpTime || ''}
+            onChange={(e) => handleTimeChange('wakeUpTime', e.target.value)}
+            className="input-field !px-2 text-center font-semibold tabular-nums"
+          />
+        </label>
       </div>
 
-      <p className="pt-1 text-xs font-medium text-slate-600 dark:text-slate-400">Come ti senti al risveglio?</p>
+      <p className="label pt-2">Al risveglio</p>
       <div className="segmented">
-        {(Object.entries(SLEEP_FEELINGS) as Array<[string, any]>).map(([key, { label, emoji }]) => (
+        {(Object.entries(SLEEP_FEELINGS) as Array<[string, any]>).map(([key, { label, icon: Icon }]) => (
           <button
             key={key}
             onClick={() => handleFeelingChange(key as any)}
             aria-pressed={value?.feeling === key}
             className={`segment ${value?.feeling === key ? 'segment-selected' : ''}`}
           >
-            <span aria-hidden="true" className="text-base">{emoji}</span>
+            <Icon size={20} aria-hidden="true" />
             {label}
           </button>
         ))}

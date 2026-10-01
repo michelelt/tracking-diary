@@ -24,7 +24,10 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#ffffff',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0e0e10' },
+  ],
 }
 
 export default function RootLayout({
@@ -35,11 +38,11 @@ export default function RootLayout({
   return (
     <html lang="it" className={inter.variable} suppressHydrationWarning>
       <head>
-        <meta name="color-scheme" content="light" />
+        <meta name="color-scheme" content="light dark" />
       </head>
       {/* suppressHydrationWarning: browser extensions add attributes to <body> */}
       <body
-        className="bg-slate-50 font-sans text-slate-900 dark:bg-slate-900 dark:text-slate-50"
+        className="bg-bg font-sans text-ink"
         suppressHydrationWarning
       >
         <SessionProvider>{children}</SessionProvider>

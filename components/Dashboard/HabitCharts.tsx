@@ -12,11 +12,12 @@ const MOVEMENT_COLORS: Record<string, string> = {
   niente: COLORS.none,
 }
 
-function mix(from: string, to: string, t: number): string {
-  const parse = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
-  const a = parse(from)
-  const b = parse(to)
-  return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')})`
+// Blend from the empty-cell tone towards `color`
+const mix = (color: string, t: number) => `color-mix(in srgb, ${color} ${Math.round(t * 100)}%, ${COLORS.empty})`
+
+function MoodIcon({ mood }: { mood: keyof typeof MOODS }) {
+  const Icon = MOODS[mood].icon
+  return <Icon size={20} className="mx-auto mb-1" aria-hidden="true" />
 }
 
 // Part-to-whole of movement types, with active days in the center
@@ -25,7 +26,7 @@ export function MovementDonut({ counts, activeDays, trackedDays }: {
   activeDays: number
   trackedDays: number
 }) {
-  const data = MOVEMENT_TYPES.map(({ id, label, emoji }) => ({ id, label: `${emoji} ${label}`, value: counts[id] || 0 }))
+  const data = MOVEMENT_TYPES.map(({ id, label }) => ({ id, label, value: counts[id] || 0 }))
     .filter((d) => d.value > 0)
   const total = data.reduce((a, d) => a + d.value, 0)
   if (total === 0) return <EmptyState />
@@ -43,7 +44,7 @@ export function MovementDonut({ counts, activeDays, trackedDays }: {
               outerRadius="95%"
               paddingAngle={2}
               cornerRadius={4}
-              stroke="#fff"
+              stroke={COLORS.surface}
               strokeWidth={2}
               startAngle={90}
               endAngle={-270}
@@ -62,19 +63,19 @@ export function MovementDonut({ counts, activeDays, trackedDays }: {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="text-3xl font-bold text-slate-900 dark:text-slate-50">
+          <div className="stat text-4xl">
             {activeDays}
-            <span className="text-base font-medium text-slate-400">/{trackedDays}</span>
+            <span className="text-lg font-bold text-faint">/{trackedDays}</span>
           </div>
-          <div className="text-xs text-slate-500">giorni attivi</div>
+          <div className="label mt-2">Giorni attivi</div>
         </div>
       </div>
       <ul className="space-y-1.5">
         {data.map((d) => (
           <li key={d.id} className="flex items-center gap-2 text-sm">
             <Swatch color={MOVEMENT_COLORS[d.id]} />
-            <span className="flex-1 text-slate-700 dark:text-slate-300">{d.label}</span>
-            <span className="text-slate-500 tabular-nums">{d.value}</span>
+            <span className="flex-1 text-muted">{d.label}</span>
+            <span className="font-bold tabular-nums text-ink">{d.value}</span>
           </li>
         ))}
       </ul>
@@ -95,8 +96,8 @@ export function StimulationMoodMatrix({ counts }: { counts: Record<string, Recor
             <tr>
               <th />
               {MOOD_ORDER.map((m) => (
-                <th key={m} className="text-xs font-medium text-slate-500 pb-1">
-                  <div className="text-lg">{MOODS[m].emoji}</div>
+                <th key={m} className="pb-1 text-xs font-medium text-muted">
+                  <MoodIcon mood={m} />
                   {MOODS[m].label}
                 </th>
               ))}
@@ -105,7 +106,7 @@ export function StimulationMoodMatrix({ counts }: { counts: Record<string, Recor
           <tbody>
             {STIMULATION_ORDER.map((s) => (
               <tr key={s}>
-                <th className="text-xs font-medium text-slate-500 text-right pr-2 whitespace-nowrap">
+                <th className="whitespace-nowrap pr-2 text-right text-xs font-medium text-muted">
                   {STIMULATION_LEVELS[s].label}
                 </th>
                 {MOOD_ORDER.map((m) => {
@@ -115,10 +116,10 @@ export function StimulationMoodMatrix({ counts }: { counts: Record<string, Recor
                     <td
                       key={m}
                       title={`Stimolazione ${STIMULATION_LEVELS[s].label.toLowerCase()} · ${MOODS[m].label}: ${count} giorni`}
-                      className="h-12 rounded-md text-center text-sm font-semibold transition-transform hover:scale-105"
+                      className="h-12 rounded-lg text-center text-sm font-bold tabular-nums"
                       style={{
-                        backgroundColor: count === 0 ? COLORS.empty : mix('#cde2fb', '#104281', t),
-                        color: count === 0 ? '#cbd5e1' : t > 0.45 ? '#fff' : '#0d366b',
+                        backgroundColor: count === 0 ? COLORS.empty : mix(COLORS.series1, 0.2 + 0.8 * t),
+                        color: count === 0 ? COLORS.faint : t > 0.45 ? COLORS.onAccent : COLORS.ink,
                       }}
                     >
                       {count}
@@ -130,9 +131,9 @@ export function StimulationMoodMatrix({ counts }: { counts: Record<string, Recor
           </tbody>
         </table>
       </div>
-      <div className="flex items-center gap-2 text-xs text-slate-500">
+      <div className="flex items-center gap-2 text-xs text-muted">
         <span>Meno giorni</span>
-        <div className="h-2 w-24 rounded-full" style={{ background: 'linear-gradient(to right, #cde2fb, #104281)' }} />
+        <div className="h-2 w-24 rounded-full" style={{ background: `linear-gradient(to right, ${mix(COLORS.series1, 0.2)}, ${COLORS.series1})` }} />
         <span>Più giorni</span>
       </div>
     </div>
@@ -160,7 +161,7 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
             <tr>
               <th />
               {labels.map((l) => (
-                <th key={l} className="text-xs font-medium text-slate-500 pb-1 whitespace-nowrap">
+                <th key={l} className="whitespace-nowrap pb-1 text-xs font-medium text-muted">
                   {l}
                 </th>
               ))}
@@ -169,9 +170,9 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
           <tbody>
             {labels.map((row, i) => (
               <tr key={row}>
-                <th className="text-xs font-medium text-slate-500 text-right pr-2 whitespace-nowrap">{row}</th>
+                <th className="whitespace-nowrap pr-2 text-right text-xs font-medium text-muted">{row}</th>
                 {labels.map((col, j) => {
-                  if (i === j) return <td key={col} className="h-11 rounded-md" style={{ backgroundColor: COLORS.empty }} />
+                  if (i === j) return <td key={col} className="h-11 rounded-lg" style={{ backgroundColor: COLORS.empty }} />
                   const c = find(row, col)
                   const r = c?.r ?? null
                   const strength = r === null ? 0 : Math.abs(r)
@@ -179,8 +180,8 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
                     r === null
                       ? COLORS.empty
                       : r >= 0
-                        ? mix('#f0efec', '#184f95', strength)
-                        : mix('#f0efec', '#c43534', strength)
+                        ? mix(COLORS.series1, strength)
+                        : mix(COLORS.series2, strength)
                   return (
                     <td
                       key={col}
@@ -189,8 +190,11 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
                           ? `${row} / ${col}: dati insufficienti`
                           : `${row} / ${col}: r = ${r.toFixed(2)} su ${c?.n} giorni`
                       }
-                      className="h-11 rounded-md text-center text-xs font-semibold tabular-nums"
-                      style={{ backgroundColor: bg, color: r === null ? '#cbd5e1' : strength > 0.5 ? '#fff' : '#334155' }}
+                      className="h-11 rounded-lg text-center text-xs font-bold tabular-nums"
+                      style={{
+                        backgroundColor: bg,
+                        color: r === null ? COLORS.faint : strength <= 0.5 ? COLORS.ink : r >= 0 ? COLORS.onAccent : COLORS.series2Text,
+                      }}
                     >
                       {r === null ? '–' : r.toFixed(2)}
                     </td>
@@ -202,9 +206,9 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
         </table>
       </div>
       <div className="flex flex-wrap gap-3">
-        <LegendItem color="#c43534" label="Vanno in direzioni opposte" round={false} />
-        <LegendItem color="#f0efec" label="Nessun legame" round={false} />
-        <LegendItem color="#184f95" label="Salgono insieme" round={false} />
+        <LegendItem color={COLORS.series2} label="Direzioni opposte" round={false} />
+        <LegendItem color={COLORS.empty} label="Nessun legame" round={false} />
+        <LegendItem color={COLORS.series1} label="Salgono insieme" round={false} />
       </div>
     </div>
   )

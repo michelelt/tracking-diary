@@ -17,23 +17,30 @@ export interface DashboardEntry {
   positiveThing?: string | null
 }
 
-// Chart palette (validated: categorical slots 1-3 all-pairs, mood diverging red <-> gray <-> blue)
+// Chart palette, read from the design tokens in app/globals.css so it follows light/dark.
+// series1/series2 validated for color-blind separation; mood diverges blue <-> gray <-> orange.
 export const COLORS = {
-  series1: '#2a78d6',
-  series2: '#eb6834',
-  series3: '#1baf7a',
-  none: '#a8a69e',
-  grid: '#e2e8f0',
-  axis: '#94a3b8',
-  empty: '#f1f5f9',
+  series1: 'rgb(var(--chart-1))',
+  series1Soft: 'rgb(var(--chart-1) / 0.3)',
+  series2: 'rgb(var(--chart-2))',
+  series2Text: 'rgb(var(--chart-2-fg))',
+  series3: 'rgb(var(--chart-3))',
+  none: 'rgb(var(--chart-none))',
+  grid: 'rgb(var(--line))',
+  axis: 'rgb(var(--muted))',
+  empty: 'rgb(var(--surface))',
+  surface: 'rgb(var(--bg))',
+  ink: 'rgb(var(--ink))',
+  onAccent: 'rgb(var(--accent-fg))',
+  faint: 'rgb(var(--faint))',
 }
 
 export const MOOD_ORDER = ['basso', 'neutro', 'buono', 'molto_buono'] as const
 export const MOOD_COLORS: Record<string, string> = {
-  basso: '#e34948',
-  neutro: '#c9c7bf',
-  buono: '#5598e7',
-  molto_buono: '#184f95',
+  basso: 'rgb(var(--mood-basso))',
+  neutro: 'rgb(var(--mood-neutro))',
+  buono: 'rgb(var(--mood-buono))',
+  molto_buono: 'rgb(var(--mood-molto))',
 }
 
 export const STIMULATION_ORDER = ['poco', 'normale', 'tanto', 'troppo'] as const

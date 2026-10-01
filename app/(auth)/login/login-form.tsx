@@ -15,25 +15,20 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4 dark:from-slate-900 dark:to-slate-800">
-      <div className="w-full max-w-sm">
-        <div className="card">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">Baseline</h1>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-              Traccia le tue metriche personali, 2 minuti al giorno
-            </p>
-          </div>
+    <main className="flex min-h-screen flex-col justify-center bg-bg px-6">
+      <div className="mx-auto w-full max-w-sm">
+        <span aria-hidden="true" className="block h-1.5 w-12 rounded-full bg-accent" />
+        <h1 className="mt-6 text-6xl font-black tracking-tight text-ink">Baseline</h1>
+        <p className="mt-4 text-lg text-muted">Sei metriche. Due minuti. Ogni giorno.</p>
 
-          <button onClick={handleSignIn} disabled={isLoading} className="btn-primary w-full">
-            {isLoading ? 'Accesso in corso...' : 'Accedi con Google'}
-          </button>
+        <button onClick={handleSignIn} disabled={isLoading} className="btn-primary mt-12 w-full text-base">
+          {isLoading ? 'Accesso…' : 'Entra con Google'}
+        </button>
 
-          <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
-            Se non sei ancora registrato, la tua richiesta sarà inviata all&apos;admin per l&apos;approvazione.
-          </p>
-        </div>
+        <p className="mt-4 text-sm text-muted">
+          Primo accesso? La richiesta va all&apos;admin per l&apos;approvazione.
+        </p>
       </div>
-    </div>
+    </main>
   )
 }

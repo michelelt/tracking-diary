@@ -27,8 +27,7 @@ import {
 import { EmptyState, LegendItem, Swatch, TooltipBox } from './ChartCard'
 
 const moodLabel = (mood?: string | null) => {
-  const config = MOODS[mood as keyof typeof MOODS]
-  return config ? `${config.emoji} ${config.label}` : null
+  return MOODS[mood as keyof typeof MOODS]?.label ?? null
 }
 
 // GitHub-style heatmap: one cell per day, colored by mood
@@ -66,7 +65,7 @@ export function MoodHeatmap({ days, byDate }: { days: string[]; byDate: Map<stri
         <div className="inline-flex gap-2">
           {/* Weekday labels */}
           <div
-            className="grid gap-[3px] text-[10px] text-slate-400 pt-5"
+            className="grid gap-[3px] pt-5 text-[10px] text-muted"
             style={{ gridTemplateRows: `repeat(7, ${size}px)` }}
           >
             {['Lun', '', 'Mer', '', 'Ven', '', 'Dom'].map((d, i) => (
@@ -78,7 +77,7 @@ export function MoodHeatmap({ days, byDate }: { days: string[]; byDate: Map<stri
 
           <div>
             {/* Month labels */}
-            <div className="flex gap-[3px] h-5 text-[10px] text-slate-400 capitalize">
+            <div className="flex h-5 gap-[3px] text-[10px] capitalize text-muted">
               {monthLabels.map((label, i) => (
                 <div key={i} style={{ width: size }} className="overflow-visible whitespace-nowrap">
                   {label}
@@ -100,8 +99,8 @@ export function MoodHeatmap({ days, byDate }: { days: string[]; byDate: Map<stri
                     onMouseEnter={() => setHovered(date)}
                     onMouseLeave={() => setHovered(null)}
                     title={`${formatLongDate(date)}${entry?.mood ? ' · ' + moodLabel(entry.mood) : ''}`}
-                    className={`rounded-[3px] transition-transform hover:scale-125 ${
-                      hovered === date ? 'ring-2 ring-slate-900/40' : ''
+                    className={`rounded-[3px] transition-transform duration-200 hover:scale-125 ${
+                      hovered === date ? 'ring-2 ring-ink/40' : ''
                     }`}
                     style={{
                       backgroundColor: color,
@@ -123,12 +122,12 @@ export function MoodHeatmap({ days, byDate }: { days: string[]; byDate: Map<stri
           {MOOD_ORDER.map((mood) => (
             <LegendItem key={mood} color={MOOD_COLORS[mood]} label={moodLabel(mood)!} round={false} />
           ))}
-          <LegendItem color={COLORS.empty} label="Nessun record" round={false} />
+          <LegendItem color={COLORS.empty} label="Non registrato" round={false} />
         </div>
-        <div className="text-xs text-slate-500 capitalize">
+        <div className="text-xs capitalize text-muted">
           {hovered &&
             `${formatLongDate(hovered)} · ${
-              hoveredEntry ? moodLabel(hoveredEntry.mood) || 'mood non indicato' : 'nessun record'
+              hoveredEntry ? moodLabel(hoveredEntry.mood) || 'umore non indicato' : 'non registrato'
             }`}
         </div>
       </div>
@@ -163,8 +162,10 @@ export function MoodTrend({ data }: { data: MoodPoint[] }) {
           <YAxis
             domain={[0.5, 4.5]}
             ticks={[1, 2, 3, 4]}
-            tickFormatter={(v: number) => MOODS[MOOD_ORDER[v - 1]]?.emoji ?? ''}
-            tick={{ fontSize: 16 }}
+            tick={({ x, y, payload }: { x: number; y: number; payload: { value: number } }) => {
+              const Icon = MOODS[MOOD_ORDER[payload.value - 1]]?.icon
+              return Icon ? <Icon x={x - 26} y={y - 9} size={18} color={COLORS.axis} /> : <g />
+            }}
             axisLine={false}
             tickLine={false}
             width={40}
@@ -176,7 +177,7 @@ export function MoodTrend({ data }: { data: MoodPoint[] }) {
               const p = payload[0].payload as MoodPoint
               return (
                 <TooltipBox title={formatLongDate(p.date)}>
-                  <div>{moodLabel(p.moodKey) || 'Nessun mood'}</div>
+                  <div>{moodLabel(p.moodKey) || 'Umore non indicato'}</div>
                   {p.avg !== null && <div>Media 7 giorni: {p.avg.toFixed(1)} / 4</div>}
                 </TooltipBox>
               )
@@ -196,13 +197,13 @@ export function MoodTrend({ data }: { data: MoodPoint[] }) {
             shape={(props: { cx?: number; cy?: number; payload?: MoodPoint }) => {
               const { cx, cy, payload } = props
               if (!payload?.moodKey || cx === undefined || cy === undefined) return <g />
-              return <circle cx={cx} cy={cy} r={5} fill={MOOD_COLORS[payload.moodKey]} stroke="#fff" strokeWidth={2} />
+              return <circle cx={cx} cy={cy} r={5} fill={MOOD_COLORS[payload.moodKey]} stroke={COLORS.surface} strokeWidth={2} />
             }}
           />
         </ComposedChart>
       </ResponsiveContainer>
       <div className="flex flex-wrap gap-3">
-        <LegendItem color={COLORS.series1} label="Media mobile 7 giorni" />
+        <LegendItem color={COLORS.series1} label="Media a 7 giorni" />
         {MOOD_ORDER.map((mood) => (
           <LegendItem key={mood} color={MOOD_COLORS[mood]} label={moodLabel(mood)!} />
         ))}
@@ -232,7 +233,7 @@ export function MoodDonut({ counts }: { counts: Record<string, number> }) {
               outerRadius="95%"
               paddingAngle={2}
               cornerRadius={4}
-              stroke="#fff"
+              stroke={COLORS.surface}
               strokeWidth={2}
               startAngle={90}
               endAngle={-270}
@@ -255,18 +256,19 @@ export function MoodDonut({ counts }: { counts: Record<string, number> }) {
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="text-3xl font-bold text-slate-900 dark:text-slate-50">
-            {Math.round((good / total) * 100)}%
+          <div className="stat text-4xl">
+            {Math.round((good / total) * 100)}
+            <span className="text-lg font-bold text-faint">%</span>
           </div>
-          <div className="text-xs text-slate-500">giorni positivi</div>
+          <div className="label mt-2">Giorni positivi</div>
         </div>
       </div>
       <ul className="space-y-1.5">
         {data.map((d) => (
           <li key={d.mood} className="flex items-center gap-2 text-sm">
             <Swatch color={MOOD_COLORS[d.mood]} />
-            <span className="flex-1 text-slate-700 dark:text-slate-300">{moodLabel(d.mood)}</span>
-            <span className="text-slate-500 tabular-nums">{d.value}</span>
+            <span className="flex-1 text-muted">{moodLabel(d.mood)}</span>
+            <span className="font-bold tabular-nums text-ink">{d.value}</span>
           </li>
         ))}
       </ul>

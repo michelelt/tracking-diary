@@ -80,13 +80,13 @@ export function EnergyBand({ data }: { data: EnergyPoint[] }) {
             stroke={COLORS.series1}
             strokeWidth={2}
             dot={{ r: 2.5, fill: COLORS.series1, strokeWidth: 0 }}
-            activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }}
+            activeDot={{ r: 5, stroke: COLORS.surface, strokeWidth: 2 }}
           />
         </ComposedChart>
       </ResponsiveContainer>
       <div className="flex flex-wrap gap-3">
         <LegendItem color={COLORS.series1} label="Energia media del giorno" />
-        <LegendItem color="#bfd6f3" label="Minimo - massimo" round={false} />
+        <LegendItem color={COLORS.series1Soft} label="Dal minimo al massimo" round={false} />
       </div>
     </div>
   )
@@ -151,8 +151,8 @@ export function EnergyDayProfile({ rows, dates }: { rows: ProfileRow[]; dates: s
             dataKey="avg"
             stroke={COLORS.series1}
             strokeWidth={3}
-            dot={{ r: 5, fill: COLORS.series1, stroke: '#fff', strokeWidth: 2 }}
-            activeDot={{ r: 6, stroke: '#fff', strokeWidth: 2 }}
+            dot={{ r: 5, fill: COLORS.series1, stroke: COLORS.surface, strokeWidth: 2 }}
+            activeDot={{ r: 6, stroke: COLORS.surface, strokeWidth: 2 }}
             connectNulls
           >
             <LabelList
@@ -160,14 +160,14 @@ export function EnergyDayProfile({ rows, dates }: { rows: ProfileRow[]; dates: s
               position="top"
               offset={10}
               formatter={(v: number | null) => (v === null ? '' : v.toFixed(1))}
-              style={{ fontSize: 12, fontWeight: 600, fill: '#334155' }}
+              style={{ fontSize: 13, fontWeight: 800, fill: COLORS.ink }}
             />
           </Line>
         </LineChart>
       </ResponsiveContainer>
       <div className="flex flex-wrap gap-3">
         <LegendItem color={COLORS.series1} label="Media" />
-        <LegendItem color="#c9dcf4" label="Singoli giorni" />
+        <LegendItem color={COLORS.series1Soft} label="Singoli giorni" />
       </div>
     </div>
   )
@@ -189,7 +189,7 @@ export function WeekdayRadar({ data }: { data: WeekdayRow[] }) {
       <ResponsiveContainer width="100%" height={260}>
         <RadarChart data={data} outerRadius="75%" margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
           <PolarGrid stroke={COLORS.grid} />
-          <PolarAngleAxis dataKey="day" tick={{ fontSize: 12, fill: '#64748b' }} />
+          <PolarAngleAxis dataKey="day" tick={{ fontSize: 12, fill: COLORS.axis }} />
           <PolarRadiusAxis domain={[0, 10]} tick={false} axisLine={false} tickCount={6} />
           <Tooltip
             content={({ active, payload }) => {
@@ -199,7 +199,7 @@ export function WeekdayRadar({ data }: { data: WeekdayRow[] }) {
                 <TooltipBox title={row.day}>
                   {row.energy !== null && <div>Energia: {row.energy.toFixed(1)} / 10</div>}
                   {row.mood !== null && <div>Umore: {row.mood.toFixed(1)} / 10</div>}
-                  <div className="text-slate-400">{row.count} giorni</div>
+                  <div className="text-faint">{row.count} giorni</div>
                 </TooltipBox>
               )
             }}
@@ -224,7 +224,7 @@ export function WeekdayRadar({ data }: { data: WeekdayRow[] }) {
       </ResponsiveContainer>
       <div className="flex flex-wrap gap-3 justify-center">
         <LegendItem color={COLORS.series1} label="Energia" />
-        <LegendItem color={COLORS.series2} label="Umore (riportato su 1-10)" />
+        <LegendItem color={COLORS.series2} label="Umore (su scala 1-10)" />
       </div>
     </div>
   )

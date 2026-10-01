@@ -1,5 +1,8 @@
 import type { Config } from 'tailwindcss'
 
+// Every color is a CSS variable defined in app/globals.css (light + dark)
+const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`
+
 const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,32 +12,61 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        bg: token('bg'),
+        surface: token('surface'),
+        line: token('line'),
+        ink: token('ink'),
+        muted: token('muted'),
+        faint: token('faint'),
         accent: {
-          DEFAULT: '#0e7490', // cyan-700, AA with white text
-          hover: '#155e75', // cyan-800
-          soft: '#ecfeff', // cyan-50
+          DEFAULT: token('accent'),
+          fg: token('accent-fg'), // text on an accent fill
+          text: token('accent-text'), // accent-colored text on bg
+          soft: token('accent-soft'),
         },
-        success: '#059669', // emerald-600
-        warning: '#d97706', // amber-600
-        danger: '#dc2626', // red-600
+        success: token('success'),
+        danger: {
+          DEFAULT: token('danger'),
+          fg: token('danger-fg'),
+        },
+        mood: {
+          basso: token('mood-basso'),
+          'basso-fg': token('mood-basso-fg'),
+          neutro: token('mood-neutro'),
+          'neutro-fg': token('mood-neutro-fg'),
+          buono: token('mood-buono'),
+          'buono-fg': token('mood-buono-fg'),
+          molto: token('mood-molto'),
+          'molto-fg': token('mood-molto-fg'),
+        },
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
-      boxShadow: {
-        card: '0 1px 2px rgb(15 23 42 / 0.06)',
-        raised: '0 4px 16px rgb(15 23 42 / 0.08)',
+      borderRadius: {
+        control: '12px',
+        card: '20px',
       },
-      spacing: {
-        safe: 'max(1rem, env(safe-area-inset-bottom))',
+      letterSpacing: {
+        label: '0.14em',
       },
-      minHeight: {
-        touch: '44px',
+      keyframes: {
+        pop: {
+          '0%': { transform: 'scale(0.8)', opacity: '0' },
+          '60%': { transform: 'scale(1.06)', opacity: '1' },
+          '100%': { transform: 'scale(1)' },
+        },
+        rise: {
+          '0%': { transform: 'translateY(8px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      animation: {
+        pop: 'pop 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+        rise: 'rise 240ms ease-out both',
       },
     },
   },
-  darkMode: 'class',
   plugins: [],
 }
 export default config
-

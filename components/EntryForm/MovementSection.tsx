@@ -26,19 +26,21 @@ export default function MovementSection({ value, onChange }: MovementSectionProp
   }
 
   return (
-    <div className="space-y-2">
-      <h2 className="section-title">
-        Movimento <span className="font-normal text-slate-500">· anche più di uno</span>
-      </h2>
+    <div className="space-y-3">
+      <div className="flex items-baseline justify-between gap-2">
+        <h2 className="section-title">Movimento</h2>
+        <span className="label">Anche più di uno</span>
+      </div>
 
-      <div className="grid grid-cols-4 gap-1.5">
-        {MOVEMENT_TYPES.map(({ id, label }) => (
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {MOVEMENT_TYPES.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => toggleType(id as 'palestra' | 'nuoto' | 'altro' | 'niente')}
             aria-pressed={types.includes(id as 'palestra' | 'nuoto' | 'altro' | 'niente')}
-            className={`chip !px-1 text-xs ${types.includes(id as 'palestra' | 'nuoto' | 'altro' | 'niente') ? 'chip-selected' : 'chip-unselected'}`}
+            className={`chip ${types.includes(id as 'palestra' | 'nuoto' | 'altro' | 'niente') ? 'chip-selected' : 'chip-unselected'}`}
           >
+            <Icon size={18} aria-hidden="true" />
             {label}
           </button>
         ))}
@@ -46,11 +48,12 @@ export default function MovementSection({ value, onChange }: MovementSectionProp
 
       <input
         type="text"
-        placeholder="Note brevi (es. 30 min)"
+        placeholder="Cosa hai fatto? (es. 30 min)"
+        aria-label="Note sul movimento"
         value={value?.notes || ''}
         onChange={(e) => handleNotesChange(e.target.value)}
         maxLength={100}
-        className="input-field text-sm"
+        className="input-field"
       />
     </div>
   )

@@ -9,6 +9,7 @@ import StimulationSection from '@/components/EntryForm/StimulationSection'
 import Navigation from '@/components/Navigation'
 import { localDateString } from '@/lib/dates'
 import { Entry } from '@/lib/validators'
+import { ArrowLeft, Check, CircleAlert } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
@@ -88,110 +89,107 @@ function EntryEditor() {
         return
       }
 
-      setSaveMessage('✅ Salvato con successo!')
+      setSaveMessage('✅ Giornata salvata. Continua così!')
       setFormData(defaultFormData)
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
-      setSaveMessage('❌ Errore nel salvataggio')
+      setSaveMessage('❌ Non salvato. Riprova.')
       console.error('Save error:', error)
     } finally {
       setIsSaving(false)
     }
   }
 
+  const saved = saveMessage.includes('✅')
+
   return (
     <>
       <Navigation />
-      <div className="page !pb-32">
-        <div className="mx-auto max-w-2xl space-y-4">
+      <div className="page !pb-48 md:!pb-32">
+        <div className="mx-auto max-w-2xl">
           {/* Header */}
           <div className="space-y-2">
             {isEditing && (
               <Link
                 href="/calendar"
-                className="text-sm text-slate-600 hover:underline dark:text-slate-400"
+                className="-ml-2 inline-flex min-h-[44px] items-center gap-2 px-2 text-sm font-semibold text-muted transition-colors duration-200 hover:text-ink"
               >
-                ← Torna al calendario
+                <ArrowLeft size={18} aria-hidden="true" />
+                Calendario
               </Link>
             )}
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              {isEditing ? 'Modifica giorno' : 'Oggi'}
-            </p>
+            <p className="label">{isEditing ? 'Modifica giorno' : 'Oggi'}</p>
             <h1 className="page-title first-letter:uppercase">
               {new Date(today).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
             </h1>
           </div>
 
-          {/* Sections: one card, one row per metric */}
-          <div className="card divide-y divide-slate-200 !p-0 dark:divide-slate-700">
-          <div className="p-4">
-            <SleepSection
-              value={formData.sleep || undefined}
-              onChange={(sleep) => handleChange({ sleep })}
-            />
-          </div>
-
-          <div className="p-4">
-            <EnergySection
-              value={formData.energy || undefined}
-              onChange={(energy) => handleChange({ energy })}
-            />
-          </div>
-
-          <div className="p-4">
-            <MoodSection
-              value={formData.mood || undefined}
-              onChange={(mood) => handleChange({ mood })}
-            />
-          </div>
-
-          <div className="p-4">
-            <MovementSection
-              value={formData.movement || undefined}
-              onChange={(movement) => handleChange({ movement })}
-            />
-          </div>
-
-          <div className="p-4">
-            <StimulationSection
-              value={formData.stimulation || undefined}
-              onChange={(stimulation) => handleChange({ stimulation })}
-            />
-          </div>
-
-          <div className="p-4">
-            <PositiveThingSection
-              value={formData.positiveThing || undefined}
-              onChange={(positiveThing) => handleChange({ positiveThing })}
-            />
-          </div>
-
+          {/* Sections: one row per metric, split by hairlines */}
+          <div className="mt-4 divide-y divide-line">
+            <div className="py-6">
+              <SleepSection
+                value={formData.sleep || undefined}
+                onChange={(sleep) => handleChange({ sleep })}
+              />
+            </div>
+            <div className="py-6">
+              <EnergySection
+                value={formData.energy || undefined}
+                onChange={(energy) => handleChange({ energy })}
+              />
+            </div>
+            <div className="py-6">
+              <MoodSection
+                value={formData.mood || undefined}
+                onChange={(mood) => handleChange({ mood })}
+              />
+            </div>
+            <div className="py-6">
+              <MovementSection
+                value={formData.movement || undefined}
+                onChange={(movement) => handleChange({ movement })}
+              />
+            </div>
+            <div className="py-6">
+              <StimulationSection
+                value={formData.stimulation || undefined}
+                onChange={(stimulation) => handleChange({ stimulation })}
+              />
+            </div>
+            <div className="py-6">
+              <PositiveThingSection
+                value={formData.positiveThing || undefined}
+                onChange={(positiveThing) => handleChange({ positiveThing })}
+              />
+            </div>
           </div>
 
           {/* Hint */}
-          <div className="text-center text-xs text-slate-500 dark:text-slate-400">
-            Compila quanto vuoi. Un giorno parziale è meglio di uno saltato.
-          </div>
+          <p className="pt-2 text-center text-sm text-muted">
+            Anche un giorno a metà conta. Segna quello che hai.
+          </p>
         </div>
 
-        {/* Fixed bottom save button */}
-        <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 p-4 shadow-raised backdrop-blur dark:border-slate-700 dark:bg-slate-800">
+        {/* Fixed save button, above the mobile tab bar */}
+        <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 bg-gradient-to-t from-bg from-70% to-transparent px-4 pb-3 pt-6 md:bottom-0 md:pb-6">
           <div className="mx-auto max-w-2xl space-y-3">
             {saveMessage && (
-              <div role="status" className={`rounded-lg p-3 text-center text-sm font-medium ${
-                saveMessage.includes('✅')
-                  ? 'bg-emerald-50 text-emerald-800 dark:bg-green-900/20 dark:text-green-400'
-                  : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400'
-              }`}>
-                {saveMessage}
+              <div
+                role="status"
+                className={`flex animate-pop items-center justify-center gap-2 rounded-control p-3 text-sm font-semibold ${
+                  saved ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'
+                }`}
+              >
+                {saved ? <Check size={18} strokeWidth={3} aria-hidden="true" /> : <CircleAlert size={18} aria-hidden="true" />}
+                {saveMessage.slice(2)}
               </div>
             )}
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="btn-primary w-full"
+              className="btn-primary w-full text-base"
             >
-              {isSaving ? 'Salvataggio…' : 'Salva'}
+              {isSaving ? 'Salvo…' : 'Salva giornata'}
             </button>
           </div>
         </div>

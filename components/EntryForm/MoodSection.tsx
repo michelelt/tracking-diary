@@ -9,18 +9,18 @@ interface MoodSectionProps {
 
 export default function MoodSection({ value, onChange }: MoodSectionProps) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <h2 className="section-title">Umore</h2>
 
       <div className="segmented">
-        {(Object.entries(MOODS) as Array<['basso' | 'neutro' | 'buono' | 'molto_buono', any]>).map(([key, { label, emoji }]) => (
+        {(Object.entries(MOODS) as Array<['basso' | 'neutro' | 'buono' | 'molto_buono', any]>).map(([key, { label, icon: Icon }]) => (
           <button
             key={key}
             onClick={() => onChange(key)}
             aria-pressed={value === key}
-            className={`segment !justify-start !pt-1.5 ${value === key ? 'segment-selected' : ''}`}
+            className={`segment ${value === key ? 'segment-selected' : ''}`}
           >
-            <span aria-hidden="true" className="text-base">{emoji}</span>
+            <Icon size={20} aria-hidden="true" />
             <span>{label}</span>
           </button>
         ))}

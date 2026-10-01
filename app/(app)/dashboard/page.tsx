@@ -5,6 +5,7 @@ import { EnergyBand, EnergyDayProfile, WeekdayRadar } from '@/components/Dashboa
 import { CorrelationMatrix, MovementDonut, StimulationMoodMatrix } from '@/components/Dashboard/HabitCharts'
 import { MoodDonut, MoodHeatmap, MoodTrend } from '@/components/Dashboard/MoodCharts'
 import { Night, SleepSchedule, SleepVsEnergy } from '@/components/Dashboard/SleepCharts'
+import AnimatedNumber from '@/components/AnimatedNumber'
 import Navigation from '@/components/Navigation'
 import { MOODS } from '@/lib/constants'
 import { localDateString } from '@/lib/dates'
@@ -26,6 +27,8 @@ import {
   timeToMinutes,
   weekdayIndex,
 } from '@/lib/dashboard'
+import { CircleAlert } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { Line, LineChart, ResponsiveContainer, YAxis } from 'recharts'
 
@@ -78,26 +81,24 @@ export default function DashboardPage() {
 
   const view = useMemo(() => (data ? buildView(data, rangeId) : null), [data, rangeId])
 
+  const topMood = view?.stats.topMood ? MOODS[view.stats.topMood as keyof typeof MOODS] : null
+
   return (
     <>
       <Navigation />
       <div className="page">
-        <div className="mx-auto max-w-6xl space-y-6">
+        <div className="mx-auto max-w-6xl space-y-8">
           {/* Header + range filter */}
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="page-title">Dashboard</h1>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Una panoramica completa del tuo benessere</p>
-            </div>
-            <div className="inline-flex rounded-lg bg-slate-200/70 p-1 dark:bg-slate-800">
+            <h1 className="page-title">Progressi</h1>
+            <div className="inline-flex gap-1 rounded-control bg-surface p-1">
               {RANGES.map((r) => (
                 <button
                   key={r.id}
                   onClick={() => setRangeId(r.id)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    rangeId === r.id
-                      ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-50'
-                      : 'text-slate-600 hover:text-slate-900 dark:text-slate-400'
+                  aria-pressed={rangeId === r.id}
+                  className={`min-h-[44px] rounded-lg px-3 text-sm font-semibold transition duration-200 active:scale-[0.97] ${
+                    rangeId === r.id ? 'bg-ink text-bg' : 'text-muted hover:text-ink'
                   }`}
                 >
                   {r.label}
@@ -107,102 +108,141 @@ export default function DashboardPage() {
           </div>
 
           {!view ? (
-            <div className="card state" role="status">
-              {loading ? 'Caricamento…' : 'Non è stato possibile caricare i dati. Riprova tra poco.'}
-            </div>
+            loading ? (
+              <div role="status" aria-label="Caricamento" className="space-y-8">
+                <div className="skeleton h-40" />
+                <div className="skeleton h-72 !rounded-card" />
+                <div className="skeleton h-72 !rounded-card" />
+              </div>
+            ) : (
+              <div className="card state" role="alert">
+                <CircleAlert size={24} className="text-danger" aria-hidden="true" />
+                <p className="font-semibold text-ink">Dati non caricati.</p>
+                <p>Controlla la connessione e ricarica la pagina.</p>
+              </div>
+            )
           ) : (
             // Keep the previous render visible while a new range loads
-            <div className={`space-y-6 transition-opacity ${loading ? 'opacity-50' : ''}`}>
-              {/* Stat tiles */}
-              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                <StatTile
-                  label="Giorni registrati"
-                  value={`${view.entries.length}`}
-                  detail={`su ${view.days.length} · ${view.days.length ? Math.round((view.entries.length / view.days.length) * 100) : 0}%`}
-                />
-                <StatTile label="Serie attuale" value={`${data!.streak}`} detail={data!.streak === 1 ? 'giorno di fila' : 'giorni di fila'} />
-                <StatTile
-                  label="Energia media"
-                  value={view.stats.energy !== null ? view.stats.energy.toFixed(1) : '–'}
-                  detail="su 10"
-                  spark={view.sparks.energy}
-                />
-                <StatTile
-                  label="Sonno medio"
-                  value={view.stats.sleep !== null ? `${view.stats.sleep.toFixed(1)}h` : '–'}
-                  detail="a notte"
-                  spark={view.sparks.sleep}
-                />
-                <StatTile
-                  label="Umore prevalente"
-                  value={view.stats.topMood ? MOODS[view.stats.topMood as keyof typeof MOODS].emoji : '–'}
-                  detail={view.stats.topMood ? MOODS[view.stats.topMood as keyof typeof MOODS].label : 'nessun dato'}
-                  spark={view.sparks.mood}
-                  className="col-span-2 lg:col-span-1"
-                />
-              </div>
+            <div className={`space-y-8 transition-opacity duration-200 ${loading ? 'opacity-50' : ''}`}>
+              {/* Hero: the streak leads, the rest follows */}
+              <div className="grid items-end gap-8 lg:grid-cols-[auto_1fr] lg:gap-16">
+                <div>
+                  <p className="label">Serie attuale</p>
+                  <p className="mt-2 flex items-baseline gap-3">
+                    <span className="stat text-8xl md:text-9xl">
+                      <AnimatedNumber value={data!.streak} />
+                    </span>
+                    <span className="text-lg font-bold text-muted">
+                      {data!.streak === 1 ? 'giorno di fila' : 'giorni di fila'}
+                    </span>
+                    {data!.streak >= 3 && (
+                      <span className="animate-pop text-4xl" role="img" aria-label="Serie in corso">
+                        🔥
+                      </span>
+                    )}
+                  </p>
+                </div>
 
-              <ChartCard title="Mappa dell'umore" subtitle="Ogni quadratino è un giorno, colorato in base al mood">
-                <MoodHeatmap days={view.days} byDate={view.byDate} />
-              </ChartCard>
-
-              <ChartCard title="Andamento dell'umore" subtitle="I punti sono i singoli giorni, la linea è la media degli ultimi 7">
-                <MoodTrend data={view.moodTrend} />
-              </ChartCard>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <ChartCard
-                  title="Energia giorno per giorno"
-                  subtitle="La linea è la media del giorno, la fascia va dal minimo al massimo"
-                  className="lg:col-span-2"
-                >
-                  <EnergyBand data={view.energyTrend} />
-                </ChartCard>
-                <ChartCard title="La tua curva di energia" subtitle="Come cambia l'energia da mattina a sera">
-                  <EnergyDayProfile rows={view.profile.rows} dates={view.profile.dates} />
-                </ChartCard>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <ChartCard
-                  title="Orari del sonno"
-                  subtitle="Da quando vai a letto a quando ti svegli, notte per notte"
-                  className="lg:col-span-2"
-                >
-                  <SleepSchedule nights={view.nights} />
-                </ChartCard>
-                <ChartCard title="Sonno ed energia" subtitle={view.sleepEnergySubtitle}>
-                  <SleepVsEnergy points={view.sleepEnergy} />
-                </ChartCard>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <ChartCard title="Distribuzione dell'umore">
-                  <MoodDonut counts={view.moodCounts} />
-                </ChartCard>
-                <ChartCard title="Movimento">
-                  <MovementDonut
-                    counts={view.movementCounts}
-                    activeDays={view.activeDays}
-                    trackedDays={view.movementDays}
+                <div className="grid grid-cols-2 gap-x-6 gap-y-6 md:grid-cols-4">
+                  <StatTile
+                    label="Giorni registrati"
+                    number={view.entries.length}
+                    detail={`su ${view.days.length} · ${view.days.length ? Math.round((view.entries.length / view.days.length) * 100) : 0}%`}
                   />
-                </ChartCard>
-                <ChartCard title="Ritmo settimanale" subtitle="Energia e umore medi per giorno della settimana" className="md:col-span-2 lg:col-span-1">
-                  <WeekdayRadar data={view.weekdays} />
-                </ChartCard>
+                  <StatTile
+                    label="Energia media"
+                    number={view.stats.energy}
+                    decimals={1}
+                    detail="su 10"
+                    spark={view.sparks.energy}
+                  />
+                  <StatTile
+                    label="Sonno medio"
+                    number={view.stats.sleep}
+                    decimals={1}
+                    unit="h"
+                    detail="a notte"
+                    spark={view.sparks.sleep}
+                  />
+                  <StatTile
+                    label="Umore prevalente"
+                    text={topMood ? topMood.label : '–'}
+                    detail={topMood ? 'il più frequente' : 'nessun dato'}
+                    spark={view.sparks.mood}
+                  />
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ChartCard title="Stimolazione e umore" subtitle="Quanti giorni per ogni combinazione">
-                  <StimulationMoodMatrix counts={view.stimMood} />
-                </ChartCard>
-                <ChartCard
-                  title="Cosa va insieme"
-                  subtitle="Correlazione tra le metriche: da -1 (opposte) a +1 (salgono insieme)"
-                >
-                  <CorrelationMatrix labels={view.correlationLabels} correlations={view.correlations} />
-                </ChartCard>
-              </div>
+              {view.entries.length === 0 ? (
+                <div className="card state">
+                  <p className="section-title">Qui non c&apos;è ancora niente.</p>
+                  <p>Registra il primo giorno: bastano due minuti.</p>
+                  <Link href="/today" className="btn-primary mt-4">
+                    Registra oggi
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <ChartCard title="Mappa dell'umore" subtitle="Un quadratino, un giorno.">
+                    <MoodHeatmap days={view.days} byDate={view.byDate} />
+                  </ChartCard>
+
+                  <ChartCard title="Andamento dell'umore" subtitle="Punti: i singoli giorni. Linea: media a 7 giorni.">
+                    <MoodTrend data={view.moodTrend} />
+                  </ChartCard>
+
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <ChartCard
+                      title="Energia giorno per giorno"
+                      subtitle="Linea: media del giorno. Fascia: dal minimo al massimo."
+                      className="lg:col-span-2"
+                    >
+                      <EnergyBand data={view.energyTrend} />
+                    </ChartCard>
+                    <ChartCard title="La tua curva di energia" subtitle="Da mattina a sera.">
+                      <EnergyDayProfile rows={view.profile.rows} dates={view.profile.dates} />
+                    </ChartCard>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    <ChartCard
+                      title="Orari del sonno"
+                      subtitle="Da quando vai a letto a quando ti svegli."
+                      className="lg:col-span-2"
+                    >
+                      <SleepSchedule nights={view.nights} />
+                    </ChartCard>
+                    <ChartCard title="Sonno ed energia" subtitle={view.sleepEnergySubtitle}>
+                      <SleepVsEnergy points={view.sleepEnergy} />
+                    </ChartCard>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <ChartCard title="Umore">
+                      <MoodDonut counts={view.moodCounts} />
+                    </ChartCard>
+                    <ChartCard title="Movimento">
+                      <MovementDonut
+                        counts={view.movementCounts}
+                        activeDays={view.activeDays}
+                        trackedDays={view.movementDays}
+                      />
+                    </ChartCard>
+                    <ChartCard title="Ritmo settimanale" subtitle="Energia e umore per giorno della settimana." className="md:col-span-2 lg:col-span-1">
+                      <WeekdayRadar data={view.weekdays} />
+                    </ChartCard>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                    <ChartCard title="Stimolazione e umore" subtitle="Giorni per ogni combinazione.">
+                      <StimulationMoodMatrix counts={view.stimMood} />
+                    </ChartCard>
+                    <ChartCard title="Cosa va insieme" subtitle="Da -1 (opposte) a +1 (salgono insieme).">
+                      <CorrelationMatrix labels={view.correlationLabels} correlations={view.correlations} />
+                    </ChartCard>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -211,32 +251,40 @@ export default function DashboardPage() {
   )
 }
 
+// One number under a hairline; `text` replaces the number for non-numeric stats
 function StatTile({
   label,
-  value,
+  number,
+  decimals = 0,
+  unit,
+  text,
   detail,
   spark,
-  className = '',
 }: {
   label: string
-  value: string
+  number?: number | null
+  decimals?: number
+  unit?: string
+  text?: string
   detail: string
   spark?: (number | null)[]
-  className?: string
 }) {
   const sparkData = spark?.map((v, i) => ({ i, v }))
   const hasSpark = !!spark && spark.filter((v) => v !== null).length >= 2
 
   return (
-    <div className={`card !p-4 flex flex-col justify-between gap-2 ${className}`}>
-      <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</div>
+    <div className="flex flex-col gap-3 border-t border-line pt-4">
+      <div className="label">{label}</div>
       <div className="flex items-end justify-between gap-2">
         <div>
-          <div className="text-3xl font-semibold tabular-nums tracking-tight text-slate-900 dark:text-slate-50 leading-none">{value}</div>
-          <div className="text-xs text-slate-500 mt-1.5">{detail}</div>
+          <div className={`stat ${text ? 'text-2xl' : 'text-4xl'}`}>
+            {text ?? (typeof number === 'number' ? <AnimatedNumber value={number} decimals={decimals} /> : '–')}
+            {unit && typeof number === 'number' && <span className="text-lg font-bold text-faint">{unit}</span>}
+          </div>
+          <div className="mt-2 text-xs text-muted">{detail}</div>
         </div>
         {hasSpark && (
-          <div className="w-20 h-10 shrink-0">
+          <div className="h-10 w-16 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sparkData} margin={{ top: 4, right: 2, bottom: 4, left: 2 }}>
                 <YAxis hide domain={['dataMin', 'dataMax']} />

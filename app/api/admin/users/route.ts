@@ -1,17 +1,10 @@
+import { requireAdmin } from '@/lib/api-helpers'
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
-
-async function isAdmin() {
-  const adminEmail = process.env.ADMIN_EMAIL
-  const session = await auth()
-  return session?.user?.email === adminEmail
-}
 
 export async function GET() {
-  if (!(await isAdmin())) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const error = await requireAdmin()
+  if (error) return error
 
   const users = await db.allowedUser.findMany({
     orderBy: { createdAt: 'desc' },
@@ -21,9 +14,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  if (!(await isAdmin())) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const error = await requireAdmin()
+  if (error) return error
 
   const { email } = await request.json()
 
@@ -32,8 +24,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Added by the admin: no approval step needed
     const user = await db.allowedUser.create({
-      data: { email },
+      data: { email, approved: true },
     })
     return NextResponse.json(user, { status: 201 })
   } catch (error) {
@@ -45,9 +38,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!(await isAdmin())) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const error = await requireAdmin()
+  if (error) return error
 
   const { id } = await req.json()
 

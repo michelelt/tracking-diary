@@ -69,3 +69,6 @@ pids
 # python
 .venv
 .env*
+
+# TypeScript
+*.tsbuildinfo

@@ -1,16 +1,18 @@
 'use client'
 
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 export default function Navigation() {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   const navItems = [
     { href: '/today', label: 'Oggi' },
     { href: '/calendar', label: 'Calendario' },
     { href: '/dashboard', label: 'Dashboard' },
+    ...((session?.user as { isAdmin?: boolean } | undefined)?.isAdmin ? [{ href: '/admin', label: 'Utenti' }] : []),
   ]
 
   return (

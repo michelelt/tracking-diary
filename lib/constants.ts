@@ -26,5 +26,3 @@ export const STIMULATION_LEVELS = {
   tanto: { label: 'Tanto', emoji: '📱📱' },
   troppo: { label: 'Troppo', emoji: '😵' },
 }
-
-export const ADMIN_SESSION_DURATION = 2 * 60 * 60 * 1000 // 2 hours in ms

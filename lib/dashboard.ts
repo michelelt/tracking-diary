@@ -1,4 +1,5 @@
 import { calculateHoursSlept } from '@/lib/calculations'
+import { fromDateString, toDateString } from '@/lib/dates'
 
 export interface DashboardEntry {
   date: string // YYYY-MM-DD
@@ -141,10 +142,10 @@ export function minutesToTime(minutes: number): string {
 // All YYYY-MM-DD strings from start to end (inclusive), in UTC to match stored dates
 export function dayRange(start: string, end: string): string[] {
   const days: string[] = []
-  const cur = new Date(start + 'T00:00:00Z')
-  const last = new Date(end + 'T00:00:00Z')
+  const cur = fromDateString(start)
+  const last = fromDateString(end)
   while (cur <= last) {
-    days.push(cur.toISOString().split('T')[0])
+    days.push(toDateString(cur))
     cur.setUTCDate(cur.getUTCDate() + 1)
   }
   return days
@@ -152,11 +153,11 @@ export function dayRange(start: string, end: string): string[] {
 
 // Monday = 0 ... Sunday = 6
 export function weekdayIndex(date: string): number {
-  return (new Date(date + 'T00:00:00Z').getUTCDay() + 6) % 7
+  return (fromDateString(date).getUTCDay() + 6) % 7
 }
 
 export function formatShortDate(date: string): string {
-  return new Date(date + 'T00:00:00Z').toLocaleDateString('it-IT', {
+  return fromDateString(date).toLocaleDateString('it-IT', {
     day: 'numeric',
     month: 'short',
     timeZone: 'UTC',
@@ -164,7 +165,7 @@ export function formatShortDate(date: string): string {
 }
 
 export function formatLongDate(date: string): string {
-  return new Date(date + 'T00:00:00Z').toLocaleDateString('it-IT', {
+  return fromDateString(date).toLocaleDateString('it-IT', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

@@ -1,6 +1,6 @@
 'use client'
 
-import { EnergyData } from '@/lib/types'
+import { Energy as EnergyData } from '@/lib/validators'
 
 interface EnergySectionProps {
   value?: EnergyData

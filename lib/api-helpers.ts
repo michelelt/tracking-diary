@@ -1,44 +1,32 @@
 import { auth } from '@/auth'
 import { NextResponse } from 'next/server'
+import { isAdminEmail, isAllowedEmail } from './auth'
 import { db } from './db'
 
-export async function requireAuth() {
-  const session = await auth()
-
-  if (!session?.user?.email) {
-    return null
-  }
-
-  return session
-}
-
+// The signed-in, approved user, or the error response to return
 export async function requireAuthUser() {
-  const session = await requireAuth()
+  const email = (await auth())?.user?.email
 
-  if (!session || !session.user?.email) {
-    return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
+  if (!email) {
+    return { user: null, error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
   }
 
-  const user = await db.user.findUnique({
-    where: { email: session.user.email },
-  })
+  // Checked on every request: a session outlives a revoked approval
+  if (!(await isAllowedEmail(email))) {
+    return { user: null, error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) }
+  }
+
+  const user = await db.user.findUnique({ where: { email } })
 
   if (!user) {
-    return { error: NextResponse.json({ error: 'User not found' }, { status: 404 }) }
+    return { user: null, error: NextResponse.json({ error: 'User not found' }, { status: 404 }) }
   }
 
-  return { session, user }
+  return { user, error: null }
 }
 
-export async function verifyUserAccess(userId: string, sessionUserId: string) {
-  if (userId !== sessionUserId) {
-    return false
-  }
-  return true
-}
-
-export function verifyAdminSession(adminToken: string): boolean {
-  const token = adminToken.split(' ')[1]
-  // Token verification will be handled in admin routes
-  return !!token
+// The error response to return, or null for the admin
+export async function requireAdmin() {
+  const session = await auth()
+  return isAdminEmail(session?.user?.email) ? null : NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 }

@@ -2,7 +2,7 @@
 
 import { SLEEP_FEELINGS } from '@/lib/constants'
 import { calculateHoursSlept } from '@/lib/calculations'
-import { SleepData } from '@/lib/types'
+import { Sleep as SleepData } from '@/lib/validators'
 
 interface SleepSectionProps {
   value?: SleepData

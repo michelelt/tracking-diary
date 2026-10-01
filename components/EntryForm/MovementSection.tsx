@@ -1,7 +1,7 @@
 'use client'
 
 import { MOVEMENT_TYPES } from '@/lib/constants'
-import { MovementData } from '@/lib/types'
+import { Movement as MovementData } from '@/lib/validators'
 
 interface MovementSectionProps {
   value?: MovementData

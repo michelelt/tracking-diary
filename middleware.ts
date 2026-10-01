@@ -1,4 +1,5 @@
 import { auth } from './auth'
+import { isAdminEmail } from './lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(request: NextRequest) {
@@ -22,8 +23,7 @@ export async function middleware(request: NextRequest) {
 
   // Admin only
   if (session && request.nextUrl.pathname.startsWith('/admin')) {
-    const adminEmail = process.env.ADMIN_EMAIL
-    if (session.user?.email !== adminEmail) {
+    if (!isAdminEmail(session.user?.email)) {
       return NextResponse.redirect(new URL('/today', request.url))
     }
   }

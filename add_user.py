@@ -41,7 +41,7 @@ def add_email(email):
 
         user_id = str(uuid.uuid4())
         cursor.execute(
-            'INSERT INTO "AllowedUser" (id, email) VALUES (%s, %s)',
+            'INSERT INTO "AllowedUser" (id, email, approved) VALUES (%s, %s, true)',
             (user_id, email)
         )
         conn.commit()

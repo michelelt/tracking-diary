@@ -7,6 +7,7 @@ import PositiveThingSection from '@/components/EntryForm/PositiveThingSection'
 import SleepSection from '@/components/EntryForm/SleepSection'
 import StimulationSection from '@/components/EntryForm/StimulationSection'
 import Navigation from '@/components/Navigation'
+import { localDateString } from '@/lib/dates'
 import { Entry } from '@/lib/validators'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -26,7 +27,7 @@ function EntryEditor() {
   const dateParam = searchParams.get('date')
   // ?date=YYYY-MM-DD opens an existing day for editing
   const isEditing = !!dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)
-  const today = isEditing ? dateParam : new Date().toISOString().split('T')[0]
+  const today = isEditing ? dateParam : localDateString()
 
   const defaultFormData: Entry = {
     date: today,
@@ -72,26 +73,10 @@ function EntryEditor() {
     setIsSaving(true)
     setSaveMessage('')
     try {
-      // Ensure date is in YYYY-MM-DD format (not datetime)
-      const formatDateString = (date: unknown): string => {
-        if (date instanceof Date) {
-          return date.toISOString().split('T')[0]
-        }
-        if (typeof date === 'string') {
-          return date.includes('T') ? date.split('T')[0] : date
-        }
-        return String(date)
-      }
-
-      const dataToSave = {
-        ...formData,
-        date: formatDateString(formData.date),
-      }
-
       const res = await fetch('/api/entries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSave),
+        body: JSON.stringify(formData),
       })
 
       if (!res.ok) {

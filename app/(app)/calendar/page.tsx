@@ -2,6 +2,7 @@
 
 import Navigation from '@/components/Navigation'
 import { MOODS } from '@/lib/constants'
+import { localDateString } from '@/lib/dates'
 import { Entry } from '@/lib/validators'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -83,27 +84,14 @@ export default function CalendarPage() {
     return moodConfig?.color || 'bg-slate-100 dark:bg-slate-700'
   }
 
-  const getDateString = (day: number) => {
-    const date = new Date(year, month, day)
-    const y = date.getFullYear()
-    const m = String(date.getMonth() + 1).padStart(2, '0')
-    const d = String(date.getDate()).padStart(2, '0')
-    return `${y}-${m}-${d}`
-  }
-
-  const getTodayString = () => {
-    const today = new Date()
-    const y = today.getFullYear()
-    const m = String(today.getMonth() + 1).padStart(2, '0')
-    const d = String(today.getDate()).padStart(2, '0')
-    return `${y}-${m}-${d}`
-  }
+  const getDateString = (day: number) => localDateString(new Date(year, month, day))
+  const todayStr = localDateString()
 
   const handleSelectDay = (day: number) => {
     const dateStr = getDateString(day)
 
     // Future days can't be opened: only today or the past
-    if (dateStr > getTodayString()) {
+    if (dateStr > todayStr) {
       setFutureBanner(true)
       return
     }
@@ -205,7 +193,7 @@ export default function CalendarPage() {
                       const dateStr = getDateString(day)
                       const entry = entries[dateStr]
                       const moodColor = getMoodColor(entry?.mood)
-                      const isToday = getTodayString() === dateStr
+                      const isToday = todayStr === dateStr
                       const isSelected = selectedEntry?.date === dateStr
 
                       return (
@@ -216,7 +204,7 @@ export default function CalendarPage() {
                           className={`aspect-square p-1 sm:p-2 rounded-lg text-center text-sm transition ${moodColor} ${
                             isToday ? 'ring-2 ring-accent' : 'hover:brightness-95'
                           } ${isSelected ? 'ring-2 ring-slate-900' : ''} ${
-                            dateStr > getTodayString() ? 'opacity-50' : ''
+                            dateStr > todayStr ? 'opacity-50' : ''
                           }`}
                         >
                           <div className={`font-medium tabular-nums ${entry?.mood === 'molto_buono' ? 'text-white' : 'text-slate-900'}`}>

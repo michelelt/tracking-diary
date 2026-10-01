@@ -1,31 +1,20 @@
+import { requireAdmin } from '@/lib/api-helpers'
 import { db } from '@/lib/db'
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
 
-async function isAdmin() {
-  const adminEmail = process.env.ADMIN_EMAIL
-  const session = await auth()
-  return session?.user?.email === adminEmail
-}
-
+// Approve a pending user
 export async function PATCH(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!(await isAdmin())) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const error = await requireAdmin()
+  if (error) return error
 
   const { id } = await params
-  const action = request.nextUrl.searchParams.get('action') || 'approve'
+  const user = await db.allowedUser.update({
+    where: { id },
+    data: { approved: true },
+  })
 
-  if (action === 'approve') {
-    const user = await db.allowedUser.update({
-      where: { id },
-      data: { approved: true },
-    })
-    return NextResponse.json(user)
-  }
-
-  return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+  return NextResponse.json(user)
 }

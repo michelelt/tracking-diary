@@ -7,6 +7,7 @@ import { MoodDonut, MoodHeatmap, MoodTrend } from '@/components/Dashboard/MoodCh
 import { Night, SleepSchedule, SleepVsEnergy } from '@/components/Dashboard/SleepCharts'
 import Navigation from '@/components/Navigation'
 import { MOODS } from '@/lib/constants'
+import { localDateString } from '@/lib/dates'
 import {
   COLORS,
   DashboardEntry,
@@ -42,13 +43,6 @@ const RANGES = [
 ] as const
 
 type RangeId = (typeof RANGES)[number]['id']
-
-function localDateString(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
 
 function rangeStart(rangeId: RangeId): string | null {
   const range = RANGES.find((r) => r.id === rangeId)!
@@ -266,7 +260,7 @@ function StatTile({
 function buildView(data: DashboardResponse, rangeId: RangeId) {
   const entries = data.entries
   const byDate = new Map(entries.map((e) => [e.date, e]))
-  const today = localDateString(new Date())
+  const today = localDateString()
   const start = rangeStart(rangeId) ?? data.firstEntryDate ?? today
   const days = dayRange(start, today)
 

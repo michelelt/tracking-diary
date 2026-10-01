@@ -6,6 +6,15 @@ if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error('Missing Google OAuth credentials')
 }
 
+export const isAdminEmail = (email?: string | null) => !!email && email === process.env.ADMIN_EMAIL
+
+// The admin is always allowed, everyone else needs an approved AllowedUser row
+export async function isAllowedEmail(email: string) {
+  if (isAdminEmail(email)) return true
+  const allowed = await db.allowedUser.findUnique({ where: { email } })
+  return !!allowed?.approved
+}
+
 export const authConfig: NextAuthConfig = {
   trustHost: true,
   providers: [
@@ -24,12 +33,16 @@ export const authConfig: NextAuthConfig = {
         return false
       }
 
-      // Create entry in AllowedUser if doesn't exist
+      // First sign-in leaves a pending request for the admin to approve
       await db.allowedUser.upsert({
         where: { email: user.email },
         update: {},
         create: { email: user.email },
       })
+
+      if (!(await isAllowedEmail(user.email))) {
+        return '/unauthorized'
+      }
 
       // Create or update user in User table
       await db.user.upsert({
@@ -51,6 +64,8 @@ export const authConfig: NextAuthConfig = {
       // Use JWT token data instead of querying DB in Edge Runtime
       if (session.user) {
         ;(session.user as any).id = token.sub
+        // Lets the navigation show the admin link; access is enforced server-side
+        ;(session.user as any).isAdmin = isAdminEmail(session.user.email)
       }
       return session
     },

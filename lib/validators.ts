@@ -23,8 +23,10 @@ export const MovementSchema = z.object({
 
 export const StimulationSchema = z.enum(['poco', 'normale', 'tanto', 'troppo']).optional()
 
+export const DateSchema = z.string().date()
+
 export const EntrySchema = z.object({
-  date: z.string().date(),
+  date: DateSchema,
   sleep: SleepSchema.nullable().optional(),
   energy: EnergySchema.nullable().optional(),
   mood: MoodSchema.nullable(),

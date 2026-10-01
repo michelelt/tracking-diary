@@ -81,7 +81,9 @@ function EntryEditor() {
       })
 
       if (!res.ok) {
-        throw new Error('Failed to save')
+        // Demo limits come with a message for the visitor
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.demo ? data.error : '')
       }
 
       if (isEditing) {
@@ -93,7 +95,7 @@ function EntryEditor() {
       setFormData(defaultFormData)
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
-      setSaveMessage('❌ Non salvato. Riprova.')
+      setSaveMessage(`❌ ${(error instanceof Error && error.message) || 'Non salvato. Riprova.'}`)
       console.error('Save error:', error)
     } finally {
       setIsSaving(false)

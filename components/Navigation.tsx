@@ -1,5 +1,6 @@
 'use client'
 
+import { DEMO_DISCLAIMER, isDemoEmail } from '@/lib/demo'
 import { CalendarDays, ChartNoAxesColumn, LogOut, Moon, PenLine, Sun, SunMoon, Users } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -89,6 +90,9 @@ export default function Navigation() {
             </button>
           </div>
         </div>
+        {isDemoEmail(session?.user?.email) && (
+          <p className="pb-2 text-center text-xs text-muted">{DEMO_DISCLAIMER}</p>
+        )}
       </header>
 
       {/* Mobile: tab bar within thumb reach */}

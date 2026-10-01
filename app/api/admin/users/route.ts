@@ -1,12 +1,15 @@
 import { requireAdmin } from '@/lib/api-helpers'
 import { db } from '@/lib/db'
+import { DEMO_EMAIL } from '@/lib/demo'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET() {
   const error = await requireAdmin()
   if (error) return error
 
+  // The demo user never belongs in this list: its access doesn't depend on it
   const users = await db.allowedUser.findMany({
+    where: { email: { not: DEMO_EMAIL } },
     orderBy: { createdAt: 'desc' },
   })
 

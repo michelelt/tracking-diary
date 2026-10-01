@@ -22,14 +22,14 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true)
   const [selectedEntry, setSelectedEntry] = useState<CalendarEntry | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
-  const [futureBanner, setFutureBanner] = useState(false)
+  const [banner, setBanner] = useState('')
 
-  // Auto-hide the "future day" banner
+  // Auto-hide the banner ("future day", demo limits)
   useEffect(() => {
-    if (!futureBanner) return
-    const timer = setTimeout(() => setFutureBanner(false), 3500)
+    if (!banner) return
+    const timer = setTimeout(() => setBanner(''), 3500)
     return () => clearTimeout(timer)
-  }, [futureBanner])
+  }, [banner])
 
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
@@ -93,7 +93,7 @@ export default function CalendarPage() {
 
     // Future days can't be opened: only today or the past
     if (dateStr > todayStr) {
-      setFutureBanner(true)
+      setBanner('Un giorno alla volta. Il futuro può aspettare.')
       return
     }
 
@@ -123,6 +123,11 @@ export default function CalendarPage() {
         setEntries(newEntries)
         setSelectedEntry(null)
         setDeleteConfirm(null)
+      } else {
+        // Demo limits come with a message for the visitor
+        const data = await res.json().catch(() => null)
+        if (data?.demo) setBanner(data.error)
+        setDeleteConfirm(null)
       }
     } catch (error) {
       console.error('Delete error:', error)
@@ -140,14 +145,14 @@ export default function CalendarPage() {
   return (
     <>
       <Navigation />
-      {futureBanner && (
+      {banner && (
         <div className="pointer-events-none fixed inset-x-0 top-20 z-50 flex justify-center px-4">
           <div
             role="alert"
-            onClick={() => setFutureBanner(false)}
+            onClick={() => setBanner('')}
             className="pointer-events-auto animate-rise cursor-pointer rounded-control bg-ink px-4 py-3 text-center text-sm font-semibold text-bg"
           >
-            Un giorno alla volta. Il futuro può aspettare.
+            {banner}
           </div>
         </div>
       )}

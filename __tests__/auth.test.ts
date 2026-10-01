@@ -3,6 +3,7 @@ process.env.GOOGLE_CLIENT_SECRET = 'secret'
 process.env.ADMIN_EMAIL = 'admin@example.com'
 
 jest.mock('next-auth/providers/google', () => ({ __esModule: true, default: jest.fn() }))
+jest.mock('next-auth/providers/credentials', () => ({ __esModule: true, default: jest.fn() }))
 jest.mock('@/lib/db', () => ({ db: { allowedUser: { findUnique: jest.fn() } } }))
 
 import { isAdminEmail, isAllowedEmail } from '@/lib/auth'
@@ -28,5 +29,14 @@ describe('allowlist', () => {
 
     findUnique.mockResolvedValue({ approved: true })
     expect(await isAllowedEmail('friend@example.com')).toBe(true)
+  })
+
+  it('lets in the demo user without an AllowedUser row, never as admin', async () => {
+    findUnique.mockResolvedValue(null)
+    expect(await isAllowedEmail('demo@demo.it')).toBe(true)
+
+    process.env.ADMIN_EMAIL = 'demo@demo.it'
+    expect(isAdminEmail('demo@demo.it')).toBe(false)
+    process.env.ADMIN_EMAIL = 'admin@example.com'
   })
 })

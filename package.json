@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit",
     "prisma:migrate": "prisma migrate dev --name",
     "prisma:studio": "prisma studio",
+    "seed:demo": "ts-node --transpile-only --compiler-options '{\"module\":\"commonjs\"}' scripts/seed-demo.ts",
     "test": "jest --watch",
     "test:ci": "jest"
   },

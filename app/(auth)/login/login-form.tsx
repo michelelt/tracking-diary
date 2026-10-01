@@ -1,5 +1,6 @@
 'use client'
 
+import { DEMO_DISCLAIMER } from '@/lib/demo'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -12,6 +13,11 @@ export function LoginForm() {
   const handleSignIn = async () => {
     setIsLoading(true)
     await signIn('google', { callbackUrl })
+  }
+
+  const handleDemo = async () => {
+    setIsLoading(true)
+    await signIn('demo', { callbackUrl: '/today' })
   }
 
   return (
@@ -28,6 +34,11 @@ export function LoginForm() {
         <p className="mt-4 text-sm text-muted">
           Primo accesso? La richiesta va all&apos;admin per l&apos;approvazione.
         </p>
+
+        <button onClick={handleDemo} disabled={isLoading} className="btn-secondary mt-8 w-full text-base">
+          Prova la demo
+        </button>
+        <p className="mt-2 text-sm text-muted">{DEMO_DISCLAIMER}</p>
       </div>
     </main>
   )

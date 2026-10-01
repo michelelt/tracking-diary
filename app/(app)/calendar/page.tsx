@@ -20,6 +20,14 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true)
   const [selectedEntry, setSelectedEntry] = useState<CalendarEntry | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [futureBanner, setFutureBanner] = useState(false)
+
+  // Auto-hide the "future day" banner
+  useEffect(() => {
+    if (!futureBanner) return
+    const timer = setTimeout(() => setFutureBanner(false), 3500)
+    return () => clearTimeout(timer)
+  }, [futureBanner])
 
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
@@ -93,6 +101,13 @@ export default function CalendarPage() {
 
   const handleSelectDay = (day: number) => {
     const dateStr = getDateString(day)
+
+    // Future days can't be opened: only today or the past
+    if (dateStr > getTodayString()) {
+      setFutureBanner(true)
+      return
+    }
+
     const entry = entries[dateStr]
 
     // Empty day: go straight to creating a new entry for that date
@@ -133,6 +148,15 @@ export default function CalendarPage() {
   return (
     <>
       <Navigation />
+      {futureBanner && (
+        <div
+          role="alert"
+          onClick={() => setFutureBanner(false)}
+          className="fixed top-20 left-1/2 z-50 w-max max-w-[calc(100%-2rem)] -translate-x-1/2 cursor-pointer rounded-lg bg-slate-900 px-4 py-3 text-center text-sm font-medium text-white shadow-lg dark:bg-slate-50 dark:text-slate-900"
+        >
+          🔮 Come fai a sapere come starai nel futuro?
+        </div>
+      )}
       <div className="min-h-screen bg-slate-50 p-4 dark:bg-slate-900 pb-24">
         <div className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Calendar */}

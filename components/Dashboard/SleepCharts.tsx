@@ -228,8 +228,8 @@ export function SleepVsEnergy({ points }: { points: SleepEnergyPoint[] }) {
               <Cell
                 key={p.date}
                 fill={p.mood ? MOOD_COLORS[p.mood] : COLORS.none}
-                stroke={COLORS.surface}
-                strokeWidth={2}
+                stroke={COLORS.moodEdge}
+                strokeWidth={1.5}
               />
             ))}
           </Scatter>

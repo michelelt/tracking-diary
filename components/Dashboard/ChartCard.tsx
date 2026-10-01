@@ -33,7 +33,7 @@ export function EmptyState({ message = 'Ancora pochi dati. Registra qualche gior
 
 export function TooltipBox({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-control border border-line bg-bg px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-control border border-line bg-raised px-3 py-2 text-xs shadow-float">
       {title && <div className="mb-1 font-bold capitalize text-ink">{title}</div>}
       <div className="space-y-0.5 tabular-nums text-muted">{children}</div>
     </div>
@@ -43,7 +43,7 @@ export function TooltipBox({ title, children }: { title?: string; children: Reac
 export function Swatch({ color, round = true }: { color: string; round?: boolean }) {
   return (
     <span
-      className={`inline-block h-2.5 w-2.5 shrink-0 ${round ? 'rounded-full' : 'rounded-sm'}`}
+      className={`inline-block h-2.5 w-2.5 shrink-0 shadow-mood-edge ${round ? 'rounded-full' : 'rounded-sm'}`}
       style={{ backgroundColor: color }}
     />
   )

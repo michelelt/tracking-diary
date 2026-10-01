@@ -18,7 +18,7 @@ export function LoginForm() {
     <main className="flex min-h-screen flex-col justify-center bg-bg px-6">
       <div className="mx-auto w-full max-w-sm">
         <span aria-hidden="true" className="block h-1.5 w-12 rounded-full bg-accent" />
-        <h1 className="mt-6 text-6xl font-black tracking-tight text-ink">Baseline</h1>
+        <h1 className="mt-6 text-6xl font-black tracking-tight text-ink">How Are You</h1>
         <p className="mt-4 text-lg text-muted">Sei metriche. Due minuti. Ogni giorno.</p>
 
         <button onClick={handleSignIn} disabled={isLoading} className="btn-primary mt-12 w-full text-base">

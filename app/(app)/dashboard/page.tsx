@@ -91,7 +91,7 @@ export default function DashboardPage() {
           {/* Header + range filter */}
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h1 className="page-title">Progressi</h1>
-            <div className="inline-flex gap-1 rounded-control bg-surface p-1">
+            <div className="inline-flex gap-1 rounded-control bg-raised p-1">
               {RANGES.map((r) => (
                 <button
                   key={r.id}

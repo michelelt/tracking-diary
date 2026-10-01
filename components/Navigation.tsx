@@ -1,9 +1,44 @@
 'use client'
 
-import { CalendarDays, ChartNoAxesColumn, LogOut, PenLine, Users } from 'lucide-react'
+import { CalendarDays, ChartNoAxesColumn, LogOut, Moon, PenLine, Sun, SunMoon, Users } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+const THEMES = {
+  system: { label: 'Tema: come il sistema', icon: SunMoon },
+  light: { label: 'Tema: giorno', icon: Sun },
+  dark: { label: 'Tema: notte', icon: Moon },
+}
+type Theme = keyof typeof THEMES
+const THEME_ORDER: Theme[] = ['system', 'light', 'dark']
+
+// Cycles system -> day -> night. The choice lives in localStorage; the inline script in app/layout.tsx applies it.
+function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>('system')
+
+  useEffect(() => {
+    const saved = localStorage.getItem('theme')
+    if (saved === 'light' || saved === 'dark') setTheme(saved)
+  }, [])
+
+  const Icon = THEMES[theme].icon
+
+  const cycle = () => {
+    const next = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % THEME_ORDER.length]
+    if (next === 'system') localStorage.removeItem('theme')
+    else localStorage.setItem('theme', next)
+    ;(window as unknown as { __applyTheme: () => void }).__applyTheme()
+    setTheme(next)
+  }
+
+  return (
+    <button onClick={cycle} aria-label={THEMES[theme].label} title={THEMES[theme].label} className="btn-ghost !px-3">
+      <Icon size={20} aria-hidden="true" />
+    </button>
+  )
+}
 
 export default function Navigation() {
   const pathname = usePathname()
@@ -20,9 +55,9 @@ export default function Navigation() {
     <>
       <header className="sticky top-0 z-40 border-b border-line bg-bg/90 px-4 backdrop-blur md:px-8">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-8">
-          <Link href="/today" className="flex items-baseline gap-2 text-lg font-black tracking-tight text-ink">
+          <Link href="/today" aria-label="How Are You" className="flex items-baseline gap-2 text-lg font-black tracking-tight text-ink">
             <span aria-hidden="true" className="h-1 w-5 rounded-full bg-accent" />
-            Baseline
+            HAY
           </Link>
 
           <nav aria-label="Principale" className="hidden flex-1 gap-1 md:flex">
@@ -42,14 +77,17 @@ export default function Navigation() {
             ))}
           </nav>
 
-          <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
-            aria-label="Esci"
-            title="Esci"
-            className="btn-ghost -mr-3 !px-3"
-          >
-            <LogOut size={20} aria-hidden="true" />
-          </button>
+          <div className="-mr-3 flex">
+            <ThemeToggle />
+            <button
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              aria-label="Esci"
+              title="Esci"
+              className="btn-ghost !px-3"
+            >
+              <LogOut size={20} aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </header>
 

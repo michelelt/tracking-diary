@@ -152,7 +152,7 @@ Nota: il calcolo dello streak è ancora semplice in questa fase (non tira gli ul
 
 **Verifiche**:
 - ✅ Layout singola colonna (niente side-by-side)
-- ✅ Header "Baseline" è visibile
+- ✅ Header "HAY" è visibile
 - ✅ I 6 sezioni sono uno sotto l'altro
 - ✅ Bottoni e input hanno spazio (44px minimo)
 - ✅ Text è leggibile senza zoom

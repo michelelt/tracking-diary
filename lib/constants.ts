@@ -9,10 +9,10 @@ export const SLEEP_FEELINGS = {
 
 export const MOODS = {
   // Same tokens as MOOD_COLORS in lib/dashboard.ts
-  basso: { label: 'Basso', icon: Frown, color: 'bg-mood-basso text-mood-basso-fg' },
-  neutro: { label: 'Neutro', icon: Meh, color: 'bg-mood-neutro text-mood-neutro-fg' },
-  buono: { label: 'Buono', icon: Smile, color: 'bg-mood-buono text-mood-buono-fg' },
-  molto_buono: { label: 'Molto buono', icon: Laugh, color: 'bg-mood-molto text-mood-molto-fg' },
+  basso: { label: 'Basso', icon: Frown, color: 'bg-mood-basso text-mood-fg shadow-mood-edge' },
+  neutro: { label: 'Neutro', icon: Meh, color: 'bg-mood-neutro text-mood-fg shadow-mood-edge' },
+  buono: { label: 'Buono', icon: Smile, color: 'bg-mood-buono text-mood-fg shadow-mood-edge' },
+  molto_buono: { label: 'Molto buono', icon: Laugh, color: 'bg-mood-molto text-mood-fg shadow-mood-edge' },
 }
 
 export const MOVEMENT_TYPES = [

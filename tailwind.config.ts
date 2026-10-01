@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss'
 
-// Every color is a CSS variable defined in app/globals.css (light + dark)
+// Every color is a CSS variable defined in app/globals.css (day + night)
 const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`
 
 const config: Config = {
@@ -14,15 +14,19 @@ const config: Config = {
       colors: {
         bg: token('bg'),
         surface: token('surface'),
-        line: token('line'),
+        raised: token('raised'),
+        line: {
+          DEFAULT: token('line'),
+          strong: token('line-strong'),
+        },
         ink: token('ink'),
         muted: token('muted'),
         faint: token('faint'),
         accent: {
-          DEFAULT: token('accent'),
-          fg: token('accent-fg'), // text on an accent fill
+          DEFAULT: token('accent'), // decorative marks
+          strong: token('accent-strong'), // primary button fill
+          fg: token('accent-fg'), // text on accent-strong
           text: token('accent-text'), // accent-colored text on bg
-          soft: token('accent-soft'),
         },
         success: token('success'),
         danger: {
@@ -31,13 +35,10 @@ const config: Config = {
         },
         mood: {
           basso: token('mood-basso'),
-          'basso-fg': token('mood-basso-fg'),
           neutro: token('mood-neutro'),
-          'neutro-fg': token('mood-neutro-fg'),
           buono: token('mood-buono'),
-          'buono-fg': token('mood-buono-fg'),
           molto: token('mood-molto'),
-          'molto-fg': token('mood-molto-fg'),
+          fg: token('mood-fg'),
         },
       },
       fontFamily: {
@@ -46,6 +47,11 @@ const config: Config = {
       borderRadius: {
         control: '12px',
         card: '20px',
+      },
+      boxShadow: {
+        // Composes with ring-*
+        'mood-edge': 'inset 0 0 0 1px rgb(var(--mood-edge))',
+        float: '0 10px 24px -8px rgb(var(--shadow) / 0.35)',
       },
       letterSpacing: {
         label: '0.14em',

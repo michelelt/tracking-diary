@@ -118,8 +118,8 @@ export function StimulationMoodMatrix({ counts }: { counts: Record<string, Recor
                       title={`Stimolazione ${STIMULATION_LEVELS[s].label.toLowerCase()} · ${MOODS[m].label}: ${count} giorni`}
                       className="h-12 rounded-lg text-center text-sm font-bold tabular-nums"
                       style={{
-                        backgroundColor: count === 0 ? COLORS.empty : mix(COLORS.series1, 0.2 + 0.8 * t),
-                        color: count === 0 ? COLORS.faint : t > 0.45 ? COLORS.onAccent : COLORS.ink,
+                        backgroundColor: count === 0 ? COLORS.empty : mix(COLORS.heat1, 0.2 + 0.8 * t),
+                        color: count === 0 ? COLORS.faint : t > 0.45 ? COLORS.heat1Text : COLORS.ink,
                       }}
                     >
                       {count}
@@ -133,7 +133,7 @@ export function StimulationMoodMatrix({ counts }: { counts: Record<string, Recor
       </div>
       <div className="flex items-center gap-2 text-xs text-muted">
         <span>Meno giorni</span>
-        <div className="h-2 w-24 rounded-full" style={{ background: `linear-gradient(to right, ${mix(COLORS.series1, 0.2)}, ${COLORS.series1})` }} />
+        <div className="h-2 w-24 rounded-full" style={{ background: `linear-gradient(to right, ${mix(COLORS.heat1, 0.2)}, ${COLORS.heat1})` }} />
         <span>Più giorni</span>
       </div>
     </div>
@@ -180,8 +180,8 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
                     r === null
                       ? COLORS.empty
                       : r >= 0
-                        ? mix(COLORS.series1, strength)
-                        : mix(COLORS.series2, strength)
+                        ? mix(COLORS.heat1, strength)
+                        : mix(COLORS.heat2, strength)
                   return (
                     <td
                       key={col}
@@ -193,7 +193,7 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
                       className="h-11 rounded-lg text-center text-xs font-bold tabular-nums"
                       style={{
                         backgroundColor: bg,
-                        color: r === null ? COLORS.faint : strength <= 0.5 ? COLORS.ink : r >= 0 ? COLORS.onAccent : COLORS.series2Text,
+                        color: r === null ? COLORS.faint : strength <= 0.5 ? COLORS.ink : r >= 0 ? COLORS.heat1Text : COLORS.heat2Text,
                       }}
                     >
                       {r === null ? '–' : r.toFixed(2)}
@@ -206,9 +206,9 @@ export function CorrelationMatrix({ labels, correlations }: { labels: string[]; 
         </table>
       </div>
       <div className="flex flex-wrap gap-3">
-        <LegendItem color={COLORS.series2} label="Direzioni opposte" round={false} />
+        <LegendItem color={COLORS.heat2} label="Direzioni opposte" round={false} />
         <LegendItem color={COLORS.empty} label="Nessun legame" round={false} />
-        <LegendItem color={COLORS.series1} label="Salgono insieme" round={false} />
+        <LegendItem color={COLORS.heat1} label="Salgono insieme" round={false} />
       </div>
     </div>
   )

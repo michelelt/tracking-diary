@@ -8,70 +8,88 @@
  * them for charts. Values are RGB channels so Tailwind opacity modifiers work.
  */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
-  --bg: 255 255 255;
-  --surface: 245 245 247;
-  --line: 228 228 231;
-  --ink: 17 17 19;
-  --muted: 99 99 107;
-  --faint: 161 161 170;
+  /* Day: crema e salvia */
+  --bg: 250 246 238;
+  --surface: 255 253 248; /* cards */
+  --raised: 241 236 224; /* controls, hover, tooltips */
+  --line: 226 220 205;
+  --line-strong: 140 136 117; /* input borders: 3:1 on --bg and --surface */
+  --ink: 46 58 47;
+  --muted: 95 107 95;
+  --faint: 98 110 98; /* AA on --raised leaves no room below --muted */
 
-  --accent: 235 102 8;
-  --accent-fg: 20 10 0;
-  --accent-text: 184 74 0;
-  --accent-soft: 255 240 230;
+  --accent: 139 168 136; /* decorative only: 2.4:1 on --bg */
+  --accent-strong: 86 117 83; /* primary button fill, darkened from #6E8F6B for AA with --accent-fg */
+  --accent-fg: 255 253 248;
+  --accent-text: 79 107 77;
 
-  --success: 21 128 61;
-  --danger: 220 38 38;
-  --danger-fg: 255 255 255;
+  --success: 79 107 77;
+  --danger: 168 66 63;
+  --danger-fg: 255 253 248;
 
-  /* Charts: orange + blue validated for color-blind separation on both surfaces */
-  --chart-1: 235 102 8;
-  --chart-2: 46 107 168;
-  --chart-2-fg: 255 255 255;
-  --chart-3: 154 154 162;
-  --chart-none: 212 212 216;
+  /* Charts: sage + indigo, 3:1 on --surface and separable for color-blind readers */
+  --chart-1: 110 143 107;
+  --chart-2: 111 123 201;
+  --chart-3: 140 136 117;
+  --chart-none: 226 220 205;
 
-  /* Mood: blue (low) <-> gray <-> orange (high) */
-  --mood-basso: 46 107 168;
-  --mood-basso-fg: 255 255 255;
-  --mood-neutro: 196 196 202;
-  --mood-neutro-fg: 17 17 19;
-  --mood-buono: 247 178 126;
-  --mood-buono-fg: 20 10 0;
-  --mood-molto: 235 102 8;
-  --mood-molto-fg: 20 10 0;
+  /* Heatmap fills, blended from --raised. Below half strength the text is --ink, above it *-fg */
+  --heat-1: var(--chart-1);
+  --heat-1-fg: 20 28 21;
+  --heat-2: var(--chart-2);
+  --heat-2-fg: 18 20 43;
+
+  /* Mood: blue-violet (low) -> peach-yellow (high), never red/green. Same in both themes */
+  --mood-basso: 111 123 201;
+  --mood-neutro: 170 157 215;
+  --mood-buono: 228 195 179;
+  --mood-molto: 245 215 122;
+  --mood-fg: 18 20 43;
+  /* Outline that keeps pale mood fills visible on cream; blends into the surface at night */
+  --mood-edge: 140 136 117;
+
+  --shadow: 46 58 47;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: 14 14 16;
-    --surface: 28 28 31;
-    --line: 46 46 51;
-    --ink: 245 245 247;
-    --muted: 161 161 170;
-    --faint: 113 113 122;
+/* Night: notte e lavanda. data-theme is set by the inline script in app/layout.tsx */
+:root[data-theme='dark'] {
+  color-scheme: dark;
 
-    --accent-text: 255 138 61;
-    --accent-soft: 51 26 8;
+  --bg: 18 20 43;
+  --surface: 28 31 61;
+  --raised: 38 42 79;
+  --line: 51 55 94;
+  --line-strong: 106 110 156;
+  --ink: 232 230 245;
+  --muted: 169 166 201;
+  --faint: 151 147 186;
 
-    --success: 74 222 128;
-    --danger: 248 113 113;
-    --danger-fg: 26 5 5;
+  --accent: 184 169 232;
+  --accent-strong: 156 136 224;
+  --accent-fg: 18 20 43;
+  --accent-text: 184 169 232;
 
-    --chart-2: 79 138 212;
-    --chart-2-fg: 14 14 16;
-    --chart-3: 110 110 118;
-    --chart-none: 58 58 63;
+  --success: 168 207 164;
+  --danger: 242 163 172;
+  --danger-fg: 18 20 43;
 
-    --mood-basso: 79 138 212;
-    --mood-basso-fg: 14 14 16;
-    --mood-neutro: 90 90 98;
-    --mood-neutro-fg: 245 245 247;
-    --mood-buono: 158 78 22;
-    --mood-buono-fg: 255 255 255;
-  }
+  /* Charts: lavender + peach */
+  --chart-1: 184 169 232;
+  --chart-2: 242 201 160;
+  --chart-3: 126 130 173;
+  --chart-none: 51 55 94;
+
+  /* Deeper than the chart series so light text holds AA across the whole blend */
+  --heat-1: 100 85 184;
+  --heat-1-fg: var(--ink);
+  --heat-2: 138 92 70;
+  --heat-2-fg: var(--ink);
+
+  --mood-edge: 28 31 61;
+
+  --shadow: 6 7 18;
 }
 
 @layer base {
@@ -84,7 +102,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--accent));
+    outline: 2px solid rgb(var(--accent-text));
     outline-offset: 2px;
   }
 
@@ -104,15 +122,15 @@
   }
 
   .btn-primary {
-    @apply btn bg-accent text-accent-fg hover:brightness-110;
+    @apply btn bg-accent-strong text-accent-fg hover:brightness-110;
   }
 
   .btn-secondary {
-    @apply btn border border-line bg-bg text-ink hover:bg-surface;
+    @apply btn border border-line bg-surface text-ink hover:bg-raised;
   }
 
   .btn-ghost {
-    @apply btn text-muted hover:bg-surface hover:text-ink;
+    @apply btn text-muted hover:bg-raised hover:text-ink;
   }
 
   .btn-danger {
@@ -138,7 +156,7 @@
 
   /* One-row choice between ordered levels */
   .segmented {
-    @apply grid grid-cols-4 gap-1 rounded-control bg-surface p-1;
+    @apply grid grid-cols-4 gap-1 rounded-control bg-raised p-1;
   }
 
   .segment {
@@ -163,11 +181,11 @@
   }
 
   .input-field {
-    @apply min-h-[48px] w-full rounded-control border border-line bg-bg px-4 py-2 text-base text-ink placeholder-faint transition-colors duration-200 focus:border-ink focus:outline-none;
+    @apply min-h-[48px] w-full rounded-control border border-line-strong bg-bg px-4 py-2 text-base text-ink placeholder-faint transition-colors duration-200 focus:border-ink focus:outline-none;
   }
 
   .card {
-    @apply rounded-card border border-line bg-bg p-5 md:p-6;
+    @apply rounded-card border border-line bg-surface p-5 md:p-6;
   }
 
   /* pb clears the mobile tab bar */
@@ -185,6 +203,6 @@
   }
 
   .skeleton {
-    @apply animate-pulse rounded-control bg-surface;
+    @apply animate-pulse rounded-control bg-raised;
   }
 }

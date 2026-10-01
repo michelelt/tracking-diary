@@ -101,7 +101,7 @@ export function MoodHeatmap({ days, byDate }: { days: string[]; byDate: Map<stri
                     title={`${formatLongDate(date)}${entry?.mood ? ' · ' + moodLabel(entry.mood) : ''}`}
                     className={`rounded-[3px] transition-transform duration-200 hover:scale-125 ${
                       hovered === date ? 'ring-2 ring-ink/40' : ''
-                    }`}
+                    } ${entry?.mood ? 'shadow-mood-edge' : ''}`}
                     style={{
                       backgroundColor: color,
                       width: size,
@@ -197,7 +197,7 @@ export function MoodTrend({ data }: { data: MoodPoint[] }) {
             shape={(props: { cx?: number; cy?: number; payload?: MoodPoint }) => {
               const { cx, cy, payload } = props
               if (!payload?.moodKey || cx === undefined || cy === undefined) return <g />
-              return <circle cx={cx} cy={cy} r={5} fill={MOOD_COLORS[payload.moodKey]} stroke={COLORS.surface} strokeWidth={2} />
+              return <circle cx={cx} cy={cy} r={5} fill={MOOD_COLORS[payload.moodKey]} stroke={COLORS.moodEdge} strokeWidth={1.5} />
             }}
           />
         </ComposedChart>
@@ -233,8 +233,8 @@ export function MoodDonut({ counts }: { counts: Record<string, number> }) {
               outerRadius="95%"
               paddingAngle={2}
               cornerRadius={4}
-              stroke={COLORS.surface}
-              strokeWidth={2}
+              stroke={COLORS.moodEdge}
+              strokeWidth={1}
               startAngle={90}
               endAngle={-270}
             >

@@ -1,4 +1,4 @@
-# Baseline — Diario Minimale
+# How Are You (HAY) — Diario Minimale
 
 Un'app web minimalista per tracciare 6 metriche personali in 2 minuti al giorno. Pensata per mobile, offline-tolerant, e costruita su stack gratuito (Vercel, Supabase free).
 
@@ -118,7 +118,7 @@ npx prisma migrate dev --name [nome]  # Crea nuova migrazione
 ## Struttura del progetto
 
 ```
-baseline/
+how-are-you/
 ├── app/
 │   ├── (auth)/         # Login, unauthorized (non protette)
 │   ├── (app)/          # Tutte le pagine app (protette da session)

@@ -59,7 +59,7 @@ cat .env.local
 1. Vai su https://supabase.com/
 2. Clicca **"Sign Up"** (o login se hai account)
 3. **New Project**:
-   - Name: `baseline-dev` (o come vuoi)
+   - Name: `hay-dev` (o come vuoi)
    - Region: `eu-west-1` (Europa, consigliato)
    - Password database: genera una password strong (copia da qualche parte)
    - Clicca **"Create new project"**
@@ -101,7 +101,7 @@ echo $env:DATABASE_URL.Substring(0, 50)
 1. Vai su https://console.cloud.google.com/
 2. In alto, clicca il dropdown "Select a Project"
 3. Clicca **"NEW PROJECT"**
-   - Project name: `Baseline Local Dev`
+   - Project name: `HAY Local Dev`
    - Clicca **"CREATE"**
 
 4. Aspetta 30 secondi che il progetto sia creato
@@ -118,7 +118,7 @@ echo $env:DATABASE_URL.Substring(0, 50)
 1. Vai a **APIs & Services > OAuth consent screen**
 2. Seleziona **"External"** → **"CREATE"**
 3. Compila il form:
-   - **App name**: `Baseline`
+   - **App name**: `How Are You`
    - **User support email**: la tua email
    - **Developer contact information**: la tua email
    - Clicca **"SAVE AND CONTINUE"** (salta i test scope)
@@ -129,7 +129,7 @@ echo $env:DATABASE_URL.Substring(0, 50)
 2. Clicca **"+ CREATE CREDENTIALS"** → **"OAuth 2.0 Client ID"**
 3. Se ti chiede di configurare OAuth consent screen, clicca **"CONFIGURE CONSENT SCREEN"** (fatto al step 3.3)
 4. Scegli **Application type**: **"Web application"**
-5. **Name**: `Baseline Local`
+5. **Name**: `HAY Local`
 6. Sotto **Authorized redirect URIs**, clicca **"+ ADD URI"** e aggiungi:
    ```
    http://localhost:3000/api/auth/callback/google
@@ -282,7 +282,7 @@ Vai a: **http://localhost:3000**
 ### 9.2 Vedi la schermata di login
 
 Vedrai:
-- Titolo: **"Baseline — Diario Minimale"**
+- Titolo: **"How Are You — Diario Minimale"**
 - Sottotitolo: "Traccia le tue 6 metriche personali in 2 minuti al giorno"
 - Bottone blu: **"Accedi con Google"**
 
@@ -290,7 +290,7 @@ Vedrai:
 
 Si apre una finestra/tab di Google dove ti chiede di:
 1. Selezionare l'account Google (se ne hai più di uno)
-2. Approvare che Baseline acceda al tuo profilo
+2. Approvare che How Are You acceda al tuo profilo
 
 Clicca **"Continua"** / **"Consenti"**
 
@@ -303,7 +303,7 @@ Clicca **"Continua"** / **"Consenti"**
 - Ti reindirizza a `/today`
 
 **Se tutto va bene**: vedi la schermata principale con:
-- Header: "Baseline" + link Oggi/Calendario/Analisi + bottone Logout
+- Header: "HAY" + link Oggi/Calendario/Analisi + bottone Logout
 - Data di oggi in grande
 - 6 sezioni vuote (Sonno, Energia, Umore, Movimento, Stimolazione, Una cosa bella)
 

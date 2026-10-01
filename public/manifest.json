@@ -1,13 +1,13 @@
 {
-  "name": "Baseline — Diario Minimale",
-  "short_name": "Baseline",
+  "name": "How Are You — Diario Minimale",
+  "short_name": "HAY",
   "description": "Traccia le tue 6 metriche personali in 2 minuti al giorno",
   "start_url": "/today",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#12142B",
+  "theme_color": "#12142B",
   "categories": ["health", "lifestyle"],
   "icons": [
     {

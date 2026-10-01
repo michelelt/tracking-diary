@@ -18,20 +18,23 @@ export interface DashboardEntry {
 }
 
 // Chart palette, read from the design tokens in app/globals.css so it follows light/dark.
-// series1/series2 validated for color-blind separation; mood diverges blue <-> gray <-> orange.
+// series1/series2 validated for color-blind separation; mood runs blue-violet -> peach-yellow.
 export const COLORS = {
   series1: 'rgb(var(--chart-1))',
   series1Soft: 'rgb(var(--chart-1) / 0.3)',
   series2: 'rgb(var(--chart-2))',
-  series2Text: 'rgb(var(--chart-2-fg))',
+  heat1: 'rgb(var(--heat-1))',
+  heat1Text: 'rgb(var(--heat-1-fg))',
+  heat2: 'rgb(var(--heat-2))',
+  heat2Text: 'rgb(var(--heat-2-fg))',
+  moodEdge: 'rgb(var(--mood-edge))',
   series3: 'rgb(var(--chart-3))',
   none: 'rgb(var(--chart-none))',
   grid: 'rgb(var(--line))',
   axis: 'rgb(var(--muted))',
-  empty: 'rgb(var(--surface))',
-  surface: 'rgb(var(--bg))',
+  empty: 'rgb(var(--raised))',
+  surface: 'rgb(var(--surface))',
   ink: 'rgb(var(--ink))',
-  onAccent: 'rgb(var(--accent-fg))',
   faint: 'rgb(var(--faint))',
 }
 

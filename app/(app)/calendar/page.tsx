@@ -80,9 +80,9 @@ export default function CalendarPage() {
   }
 
   const getMoodColor = (mood?: string | null) => {
-    if (!mood) return 'bg-surface text-ink'
+    if (!mood) return 'bg-raised text-ink'
     const moodConfig = MOODS[mood as keyof typeof MOODS]
-    return moodConfig?.color || 'bg-surface text-ink'
+    return moodConfig?.color || 'bg-raised text-ink'
   }
 
   const getDateString = (day: number) => localDateString(new Date(year, month, day))
@@ -208,19 +208,19 @@ export default function CalendarPage() {
                         aria-current={isToday ? 'date' : undefined}
                         aria-label={`${day}${entry?.mood ? `, umore ${labelOf(MOODS, entry.mood).toLowerCase()}` : entry ? ', registrato' : ''}`}
                         className={`relative aspect-square rounded-control text-base font-bold tabular-nums transition duration-200 active:scale-[0.95] ${
-                          entry ? moodColor : 'text-muted hover:bg-surface'
+                          entry ? moodColor : 'text-muted hover:bg-raised'
                         } ${
                           isSelected
                             ? 'ring-2 ring-ink ring-offset-2 ring-offset-bg'
                             : isToday
-                              ? 'ring-2 ring-accent ring-offset-2 ring-offset-bg'
+                              ? 'ring-2 ring-accent-strong ring-offset-2 ring-offset-bg'
                               : ''
                         } ${dateStr > todayStr ? 'opacity-40' : ''}`}
                       >
                         {day}
                         {/* Filled in, but without a mood */}
                         {entry && !entry.mood && (
-                          <span aria-hidden="true" className="absolute bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-accent" />
+                          <span aria-hidden="true" className="absolute bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-accent-strong" />
                         )}
                       </button>
                     )

@@ -10,7 +10,7 @@ export default function UnauthorizedPage() {
         <Lock size={32} className="text-muted" aria-hidden="true" />
         <h1 className="page-title mt-6">Accesso non attivo</h1>
         <p className="mt-4 text-lg text-muted">
-          Il tuo account Google non è ancora approvato per Baseline.
+          Il tuo account Google non è ancora approvato per How Are You.
         </p>
 
         <button

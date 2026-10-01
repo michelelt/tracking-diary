@@ -42,7 +42,7 @@ export default function EnergySection({ value, onChange }: EnergySectionProps) {
             value={value?.[key] || ''}
             onChange={(e) => handleChange(key, parseInt(e.target.value))}
             // Unset sliders stay gray so the default thumb position doesn't read as a value
-            className={`h-2 w-full cursor-pointer appearance-none rounded-full bg-surface ${value?.[key] ? 'accent-accent' : 'accent-faint'}`}
+            className={`h-2 w-full cursor-pointer appearance-none rounded-full bg-raised ${value?.[key] ? 'accent-accent-strong' : 'accent-faint'}`}
           />
           <span className={`stat w-8 shrink-0 text-right text-2xl ${value?.[key] ? '' : '!text-faint'}`}>
             {value?.[key] || '–'}
